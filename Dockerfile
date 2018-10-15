@@ -41,6 +41,7 @@ CMD java -javaagent:/app/elastic-apm-agent.jar\
                                         -Dspring.messages.basename=messages/messages\
                                         -Dlogging.level.org.springframework=${LOG_LEVEL:-INFO}\
                                         -Dsecurity.ignored=${SECURITY_IGNORED:-/**}\
+                                        -Dspring.datasource.initialize=true\
                                         -Dbasic.authentication.enabled=${AUTHENTICATION_ENABLED:-false}\
                                         -Dserver.address=${SERVER_ADDRESS:-0.0.0.0}\
                                         -Dspring.datasource.url=${DATABASE_URL:-jdbc:hsqldb:mem:petclinic}\

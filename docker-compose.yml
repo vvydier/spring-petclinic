@@ -69,6 +69,15 @@ services:
     environment:
       ELASTIC_APM_SERVER_URL: ${ELASTIC_APM_SERVER_URL:-http://apm-server:8200}
       SERVER_PORT: ${SERVER_PORT:-8000}
+      JAVA_PROFILE: mysql,spring-data-jpa
+      DATABASE_URL: jdbc:mysql://mysql:3306/petclinic?useUnicode=true
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: petclinic
+      DATABASE_DRIVER: com.mysql.jdbc.Driver
+      DATABASE_DIALECT: MYSQL
+      DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
+      DATASOURCE_SCHEMA: classpath*:db/mysql/initDB.sql
+      DATASOURCE_DATA: classpath*:db/mysql/populateDB.sql
     depends_on:
       elasticsearch:
         condition: service_healthy
