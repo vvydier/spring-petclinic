@@ -1,12 +1,31 @@
-# REST version of Spring PetClinic Sample Application (spring-framework-petclinic extend ) [![Build Status](https://travis-ci.org/spring-petclinic/spring-petclinic-rest.png?branch=master)](https://travis-ci.org/spring-petclinic/spring-petclinic-rest/)
+# Elastic of Spring PetClinic Sample Application (spring-framework-petclinic extend )
 
-This backend version of the Spring Petclinic application only provides a REST API. **There is no UI**.
-The [spring-petclinic-angular project](https://github.com/spring-petclinic/spring-petclinic-angular) is a Angular 5 front-end application witch consumes the REST API.
+This version of the Spring Petclinic application utilises the [REST API implementation](https://github.com/spring-petclinic/spring-petclinic-rest) as its core.
 
-## Understanding the Spring Petclinic application with a few diagrams
-<a href="https://speakerdeck.com/michaelisvy/spring-petclinic-sample-application">See the presentation here</a>
+The [reactjs version](https://github.com/spring-petclinic/spring-petclinic-reactjs) has been integrated and updated to use this REST interface and the latest version of React.
 
-## Running petclinic locally
+A docker compose allows the user to run the application, backed with Mysql as its data layer, with elastic APM and Beat instrumentation enabled. The following services are enabled:
+
+- Elasticsearch
+- Kibana
+- REST/Core instrumented with Java APM Agent
+- MySQL
+- Packetbeat
+
+This allows collection of the following metrics:
+
+- Java APM data as available from the Java Agent i.e. transactions, spans and errors
+- MYSQL traffic via Packetbeat
+- TODO
+
+## Running Petclinic with the Elastic Stack
+
+
+`ES_VERSION=6.4.2 docker-compose -f docker-compose.yml up`
+
+Other versions of the Elasticstack may work. Currently, only version 6.4.2 has been tested.
+
+## Running petclinic locally for development
 ```
 	git clone https://github.com/spring-petclinic/spring-petclinic-rest.git
 	cd spring-petclinic-rest
@@ -15,18 +34,16 @@ The [spring-petclinic-angular project](https://github.com/spring-petclinic/sprin
 
 You can then access petclinic here: http://localhost:9966/petclinic/
 
+
+## Understanding the Spring Petclinic application with a few diagrams
+<a href="https://speakerdeck.com/michaelisvy/spring-petclinic-sample-application">See the presentation here</a>
+
+
 ## Swagger REST API documentation presented here (after application start):
 <a href="http://localhost:9966/petclinic/swagger-ui.html">http://localhost:9966/petclinic/swagger-ui.html</a>
 
-## Screenshot of the Angular 5 client
 
-<img width="1427" alt="spring-petclinic-angular2" src="https://cloud.githubusercontent.com/assets/838318/23263243/f4509c4a-f9dd-11e6-951b-69d0ef72d8bd.png">
-
-## In case you find a bug/suggested improvement for Spring Petclinic
-Our issue tracker is available here: https://github.com/spring-petclinic/spring-petclinic-rest/issues
-
-
-## Database configuration
+## Development - Database configuration
 
 In its default configuration, Petclinic uses an in-memory database (HSQLDB) which
 gets populated at startup with data.
@@ -56,6 +73,8 @@ You may also start a MySql database with docker:
 ```
 docker run --name mysql-petclinic -e MYSQL_ROOT_PASSWORD=petclinic -e MYSQL_DATABASE=petclinic -p 3306:3306 mysql:5.7.8
 ```
+
+or use the docker-compose-mysql.yml` file provided.
 
 For PostgeSQL database, it is needed to change param "hsqldb" to "postgresql" in string
 ```
@@ -131,25 +150,5 @@ git clone https://github.com/spring-petclinic/spring-petclinic-rest.git
 ```
 File -> Import -> Maven -> Existing Maven project
 ```
-
-
-## Looking for something in particular?
-
-| Layer | Source |
-|--|--|
-| REST API controllers | [REST folder](src/main/java/org/springframework/samples/petclinic/rest) |
-| Service | [ClinicServiceImpl.java](src/main/java/org/springframework/samples/petclinic/service/ClinicServiceImpl.java) |
-|JDBC | [jdbc folder](src/main/java/org/springframework/samples/petclinic/repository/jdb) |
-| JPA | [jpa folder](src/main/java/org/springframework/samples/petclinic/repository/jpa) |
-| Spring Data JPA | [springdatajpa folder](src/main/java/org/springframework/samples/petclinic/repository/springdatajpa) |
-| Tests | [AbstractClinicServiceTests.java](src/test/java/org/springframework/samples/petclinic/service/AbstractClinicServiceTests.java) |
-
-# Contributing
-
-The [issue tracker](https://github.com/spring-petclinic/spring-petclinic-rest/issues) is the preferred channel for bug reports, features requests and submitting pull requests.
-
-For pull requests, editor preferences are available in the [editor config](https://github.com/spring-petclinic/spring-petclinic-rest/blob/master/.editorconfig) for easy use in common text editors. Read more and download plugins at <http://editorconfig.org>.
-
-
 
 

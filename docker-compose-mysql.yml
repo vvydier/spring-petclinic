@@ -1,0 +1,18 @@
+version: '2.2'
+services:
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=petclinic
+      - MYSQL_DATABASE=petclinic
+    volumes:
+      - "./mysql-docker.cnf:/etc/mysql/conf.d/docker.cnf:ro"
+
+
+
+
+#mysql -h 127.0.0.1 --port=3306 -u root --password=petclinic < ./src/main/resources/db/mysql/initDB.sql
+#mysql -h 127.0.0.1 --port=3306 -u root --password=petclinic petclinic < ./src/main/resources/db/mysql/populateDB.sql
