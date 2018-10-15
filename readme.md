@@ -1,22 +1,27 @@
-# Elastic of Spring PetClinic Sample Application (spring-framework-petclinic extend )
+# Spring PetClinic Application with the Elastic Stack (spring-framework-petclinic extend )
 
 This version of the Spring Petclinic application utilises the [REST API implementation](https://github.com/spring-petclinic/spring-petclinic-rest) as its core.
 
-The [reactjs version](https://github.com/spring-petclinic/spring-petclinic-reactjs) has been integrated and updated to use this REST interface and the latest version of React.
+The [reactjs version](https://github.com/spring-petclinic/spring-petclinic-reactjs) has been integrated and updated to use this REST interface and the latest version of React. **PENDING**.
 
-A docker compose allows the user to run the application, backed with Mysql as its data layer, with elastic APM and Beat instrumentation enabled. The following services are enabled:
+A docker compose allows the user to run the application, backed with Mysql as the data layer, with Elastic APM and Beat instrumentation enabled. The following services are deployed:
 
+- Pet Clinic via embedded Tomcat with REST API. Instrument with Elastic Java Agent.
+- React UI for Pet Clinic using above. Instrument with Elastic RUM Agent.
 - Elasticsearch
 - Kibana
-- REST/Core instrumented with Java APM Agent
 - MySQL
-- Packetbeat
+- Packetbeat - **PENDING**
+- Metricbeat - **PENDING**
+- Filebeat - **PENDING**
+- Nginx - **PENDING**
 
 This allows collection of the following metrics:
 
 - Java APM data as available from the Java Agent i.e. transactions, spans and errors
-- MYSQL traffic via Packetbeat
-- TODO
+- MYSQL, HTTP traffic via Packetbeat **PENDING**
+- Application Logs + NGINX Logs via Filebeat **PENDING**
+- JMX, Docker, Mysql, Nginx metrics via Metricbeat  **PENDING**
 
 ## Running Petclinic with the Elastic Stack
 
