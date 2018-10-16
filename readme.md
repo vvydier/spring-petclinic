@@ -2,7 +2,7 @@
 
 This version of the Spring Petclinic application utilises the [REST API implementation](https://github.com/spring-petclinic/spring-petclinic-rest) as its core.
 
-The [reactjs version](https://github.com/spring-petclinic/spring-petclinic-reactjs) has been integrated and updated to use this REST interface and the latest version of React. **PENDING**.
+The [reactjs version](https://github.com/spring-petclinic/spring-petclinic-reactjs) has been integrated and updated to use this REST interface and the latest version of React.
 
 A docker compose allows the user to run the application, backed with Mysql as the data layer, with Elastic APM and Beat instrumentation enabled. The following services are deployed:
 
