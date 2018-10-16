@@ -5,14 +5,24 @@ import { AppContainer } from 'react-hot-loader';
 import { browserHistory as history } from 'react-router';
 const initApm = require('elastic-apm-js-base').init;
 require('./styles/less/petclinic.less');
+import { url } from './util/index';
+
+let apm = null;
+const fetchUrl = url('config');
+fetch(fetchUrl)
+  .then(response => response.json())
+  .then(config => {
+    let apm = initApm({
+       serviceName: config.apm_service_name,
+       serverUrl: config.apm_server,
+       serviceVersion: config.apm_service_version
+    });
+    apm.setInitialPageLoadName(window.location.pathname !== '' ? window.location.pathname : 'homepage');
+  });
+
 
 /**
-let apm = initApm({
-   serviceName: __APM_SERVICE_NAME__,
-   serverUrl: __APM_SERVER_URL__,
-   serviceVersion: __APM_SERVICE_VERSION__
-});
-apm.setInitialPageLoadName(window.location.pathname.split('/')[1]);
+
  **/
 // The Application
 import Root from './Root';

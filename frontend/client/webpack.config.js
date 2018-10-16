@@ -40,18 +40,17 @@ module.exports = {
         historyApiFallback: true,
         proxy: {
             '/api': {
-                target: 'http://localhost:5000',
+                target: api_server_url,
                 secure: false
             },
             '/images': {
-                target: 'http://localhost:5000',
-                secure: false,
-                pathRewrite: { '^/api': '' },
-            },
-            '/api/**': {
-                target: 'http://localhost:5000',
+                target: api_server_url,
                 secure: false
             },
+            '/config':{
+              target: api_server_url,
+              secure: false
+            }
         }
    },
    resolve: {
