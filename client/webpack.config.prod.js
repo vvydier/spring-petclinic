@@ -2,6 +2,9 @@ const path = require('path');
 const webpack = require('webpack');
 
 const port = process.env.PORT || 3000;
+const apm_server_url = process.env.APM_SERVER_URL || 'http://localhost:8200';
+const apm_service_name = process.env.APM_SERVICE_NAME || 'react-petclinic';
+const apm_service_version = process.env.APM_SERVICE_VERSION || '1.0.0';
 
 const entries = [
   './src/main.tsx'
@@ -23,7 +26,10 @@ module.exports = {
       'process.env': {
         'NODE_ENV': JSON.stringify('production'),
       },
-       __API_SERVER_URL__: JSON.stringify('http://localhost:8080')
+       __API_SERVER_URL__: JSON.stringify('http://localhost:8080'),
+       __APM_SERVER_URL__: JSON.stringify(apm_server_url),
+       __APM_SERVICE_NAME__: JSON.stringify(apm_service_name),
+       __APM_SERVICE_VERSION__: JSON.stringify(apm_service_version)
     })
   ],
   resolve: {

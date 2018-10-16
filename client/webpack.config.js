@@ -2,6 +2,10 @@ const path = require('path');
 const webpack = require('webpack');
 
 const port = process.env.PORT || 3000;
+const api_server_url = process.env.API_SERVER_URL || 'http://localhost:8000';
+const apm_server_url = process.env.APM_SERVER_URL || 'http://localhost:8200';
+const apm_service_name = process.env.APM_SERVICE_NAME || 'react-petclinic';
+const apm_service_version = process.env.APM_SERVICE_VERSION || '1.0.0';
 
 const entries = [
   'webpack-dev-server/client?http://localhost:' + port,
@@ -24,7 +28,10 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
-      __API_SERVER_URL__: JSON.stringify('http://localhost:8000')
+      __API_SERVER_URL__: JSON.stringify(api_server_url),
+      __APM_SERVER_URL__: JSON.stringify(apm_server_url),
+      __APM_SERVICE_NAME__: JSON.stringify(apm_service_name),
+      __APM_SERVICE_VERSION__: JSON.stringify(apm_service_version)
     })
   ],
   resolve: {
