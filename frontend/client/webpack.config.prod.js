@@ -1,0 +1,73 @@
+const path = require('path');
+const webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+const port = process.env.PORT || 3000;
+
+const entries = [
+  './src/main.tsx'
+];
+
+
+module.exports = {
+  devtool: 'source-map',
+  entry: entries,
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: 'index.js',
+    publicPath: '/'
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production'),
+      }
+    }),
+     new HtmlWebpackPlugin({
+        template: 'src/index.html'
+     })
+  ],
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js']
+  },
+  resolveLoader: {
+    'fallback': path.join(__dirname, 'node_modules')
+  },
+  module: {
+    preLoaders: [
+      {
+        test: /\.tsx?$/,
+        loader: 'tslint',
+        include: path.join(__dirname, 'src')
+      }
+    ],
+    loaders: [
+      {
+        test: /\.css$/,
+        loader: 'style!css'
+      },
+      {
+        test: /\.less$/,
+        loader: 'style!css!less',
+        include: path.join(__dirname, 'src/styles')
+      },
+      {
+        test: /\.(png|jpg)$/,
+        loader: 'url?limit=25000'
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        loader: 'file?name=public/fonts/[name].[ext]'
+      },
+
+      {
+        test: /\.tsx?$/,
+        loader: 'babel!ts',
+        include: path.join(__dirname, 'src')
+      }
+    ]
+  },
+  tslint: {
+    emitErrors: true,
+    failOnHint: true
+  }
+};
