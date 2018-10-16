@@ -39,11 +39,7 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
 
   componentDidMount() {
     const { filter } = this.state;
-    if (typeof filter === 'string') {
-      // only load data on mount (initialy) if filter is specified
-      // i.e. lastName query param in uri was set
-      this.fetchData(filter);
-    }
+    this.fetchData(filter);
   }
 
   componentWillReceiveProps(nextProps: IFindOwnersPageProps) {
@@ -84,8 +80,9 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
    * Actually loads data from the server
    */
   fetchData(filter: string) {
-    const query = filter ? encodeURIComponent(filter) : '';
-    const requestUrl = url('petclinic/api/owners/*/lastname/' + query);
+    const query = encodeURIComponent(filter);
+
+    const requestUrl = filter && query !== '*' ? url('petclinic/api/owners/*/lastname/' + query) : url('petclinic/api/owners');
 
     fetch(requestUrl)
       .then(response => response.json())

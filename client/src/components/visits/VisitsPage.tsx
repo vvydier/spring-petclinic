@@ -43,7 +43,7 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
     const { params } = this.props;
 
     if (params && params.ownerId) {
-      fetch(url(`/petclinic/api/owner/${params.ownerId}`))
+      fetch(url(`petclinic/api/owners/${params.ownerId}`))
         .then(response => response.json())
         .then(owner => this.setState(
           {
@@ -59,15 +59,32 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
 
     const petId = this.props.params.petId;
     const { owner, visit } = this.state;
-
+    let pet = owner.pets.find(candidate => candidate.id.toString() === petId);
     const request = {
+      id: null,
       date: visit.date,
-      description: visit.description
+      description: visit.description,
+      pet: {
+          birthDate: pet.birthDate,
+          id: pet.id,
+          name: pet.name,
+          type: pet.type,
+          visits: [],
+          owner: {
+            address: owner.address,
+            city: owner.city,
+            firstName: owner.firstName,
+            lastName: owner.lastName,
+            telephone: owner.telephone,
+            pets: [],
+            id: owner.id
+          }
+      }
     };
 
-    const url = '/petclinic/api/owners/' + owner.id + '/pets/' + petId + '/visits';
+    const url = 'petclinic/api/visits';
     submitForm('POST', url, request, (status, response) => {
-      if (status === 204) {
+      if (status === 201) {
         this.context.router.push({
           pathname: '/owners/' + owner.id
         });
