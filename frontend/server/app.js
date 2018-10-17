@@ -31,6 +31,10 @@ app.use('/api', proxy(settings.api_server, {
       return settings.api_prefix+req.url
     }
 }))
+
+app.get('*', function(req,res) {
+    res.sendFile(path.join(__dirname+'/public/index.html'));
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

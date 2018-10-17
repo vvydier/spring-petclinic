@@ -5,15 +5,16 @@ ENV PATH /usr/src/petclinic-frontend/client/node_modules/.bin:$PATH
 COPY client /usr/src/petclinic-frontend/client
 WORKDIR /usr/src/petclinic-frontend/client
 RUN npm install -g npm@5.6.0
-RUN npm install
-ENV NODE_ENV=production
+RUN npm install --unsafe-perm
 RUN npm run build:prod
 
+ENV NODE_ENV=production
 COPY server /usr/src/petclinic-frontend/server
 WORKDIR /usr/src/petclinic-frontend/server
 ENV PATH /usr/src/petclinic-frontend/server/node_modules/.bin:$PATH
 RUN npm install
-RUN cp /usr/src/petclinic-frontend/client/dist/* /usr/src/petclinic-frontend/server/public/
+RUN cp /usr/src/petclinic-frontend/client/dist/index.* /usr/src/petclinic-frontend/server/public/
+RUN cp -R /usr/src/petclinic-frontend/client/dist/public/ /usr/src/petclinic-frontend/server/public/
 
 ENV NODE_ENV production
 EXPOSE 3000
