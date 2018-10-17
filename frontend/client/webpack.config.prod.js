@@ -3,7 +3,7 @@ const webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 const port = process.env.PORT || 3000;
 
-module.exports = {
+var config = {
   devtool: 'source-map',
   entry: './src/main.tsx',
   output: {
@@ -71,3 +71,8 @@ module.exports = {
       ]
   }
 };
+
+
+
+
+module.exports = config;

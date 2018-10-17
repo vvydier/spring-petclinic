@@ -10,8 +10,7 @@
     "test": "jest",
     "test:watch": "jest --watchAll --no-cache",
     "start": "webpack-dev-server --open",
-    "build:clean": "rm -rf ./dist && webpack --config webpack.config.js",
-    "build:prod": "rm -rf ./dist && NODE_ENV=production webpack --config webpack.config.prod.js"
+    "build": "NODE_ENV=production webpack -p"
   },
   "author": "Nils Hartmann",
   "license": "ISC",

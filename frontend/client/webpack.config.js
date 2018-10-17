@@ -11,7 +11,7 @@ const entries = [
   './src/main.tsx'
 ];
 
-module.exports = {
+var config = {
   devtool: 'source-map',
   entry: './src/main.tsx',
   output: {
@@ -91,3 +91,15 @@ module.exports = {
      ]
    }
 };
+
+if (process.env.NODE_ENV === 'production') {
+    config.plugins.push(
+        new webpack.DefinePlugin({
+            'process.env': {
+                'NODE_ENV': JSON.stringify('production'),
+            }
+        })
+    )
+}
+
+module.exports = config;
