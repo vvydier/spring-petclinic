@@ -50,7 +50,6 @@ services:
     volumes:
       - "./mysql-docker.cnf:/etc/mysql/conf.d/docker.cnf:ro"
 
-
   spring-petclinic-server:
     build: .
     image: docker.elastic.co/demos/spring-petclinic-server:${ES_VERSION}
@@ -58,7 +57,7 @@ services:
     networks:
       spring-petclinic-net:
         aliases:
-        - spring-petclinic
+        - spring-petclinic-server
     ports:
     - "127.0.0.1:${SERVER_PORT:-8000}:8000"
     logging:
@@ -86,7 +85,7 @@ services:
       apm-server:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "--write-out", "'HTTP %{http_code}'", "--silent", "--output", "/dev/null", "http://spring-petclinic:${SERVER_PORT:-8000}/"]
+      test: ["CMD", "curl", "--write-out", "'HTTP %{http_code}'", "--silent", "--output", "/dev/null", "http://spring-petclinic-server:${SERVER_PORT:-8000}/"]
       interval: 10s
       retries: 10
 
@@ -109,7 +108,7 @@ services:
       ELASTIC_APM_SERVER_URL: http://localhost:8200
       ELASTIC_APM_SERVICE_VERSION: 1.0.0
       ELASTIC_APM_SERVICE_NAME: react-petclinic
-      API_SERVER: 'http://spring-petclinic:${SERVER_PORT:-8000}'
+      API_SERVER: 'http://spring-petclinic-server:${SERVER_PORT:-8000}'
       SERVER_PORT: ${CLIENT_SERVER_PORT:-3000}
     depends_on:
       spring-petclinic-server:
@@ -197,6 +196,27 @@ services:
       interval: 10s
     depends_on:
       elasticsearch:
+        condition: service_healthy
+
+  server-loadgen:
+    build: ./loadgen/server
+    image: docker.elastic.co/demos/spring-petclinic-server-loadgen:${ES_VERSION}
+    container_name: spring-petclinic-server-loadgen
+    environment:
+      ENDPOINT_PORT: ${SERVER_PORT:-8000}
+      ENDPOINT_BASE: spring-petclinic-server
+      ENDPOINT_PROTOCOL: http
+    networks:
+      spring-petclinic-net:
+        aliases:
+        - spring-petclinic-server-loadgen
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '2m'
+        max-file: '5'
+    depends_on:
+      spring-petclinic-server:
         condition: service_healthy
 
 networks:
