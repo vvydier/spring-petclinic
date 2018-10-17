@@ -1,13 +1,12 @@
 FROM node:8
 
-ENV NODE_ENV=production
-
 RUN mkdir /usr/src/petclinic-frontend
 ENV PATH /usr/src/petclinic-frontend/client/node_modules/.bin:$PATH
 COPY client /usr/src/petclinic-frontend/client
 WORKDIR /usr/src/petclinic-frontend/client
-RUN npm i npm@latest -g
+RUN npm install -g npm@5.6.0
 RUN npm install
+ENV NODE_ENV=production
 RUN npm run build:prod
 
 COPY server /usr/src/petclinic-frontend/server

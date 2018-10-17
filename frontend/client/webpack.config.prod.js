@@ -17,19 +17,19 @@ module.exports = {
         'NODE_ENV': JSON.stringify('production'),
       }
     }),
-      new HtmlWebpackPlugin({
-          template: 'src/index.html'
-      }),
-      new webpack.LoaderOptionsPlugin({
-          debug: false,
-          options: {
-              tslint: {
-                  emitErrors: true,
-                  failOnHint: true
-              },
-              resolve: {}
-          }
-      })
+    new HtmlWebpackPlugin({
+      template: 'src/index.html'
+    }),
+    new webpack.LoaderOptionsPlugin({
+      debug: false,
+      options: {
+          tslint: {
+              emitErrors: true,
+              failOnHint: true
+          },
+          resolve: {}
+      }
+    })
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
