@@ -3,14 +3,9 @@ const webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 const port = process.env.PORT || 3000;
 
-const entries = [
-  './src/main.tsx'
-];
-
-
 module.exports = {
   devtool: 'source-map',
-  entry: entries,
+  entry: './src/main.tsx',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',
@@ -22,52 +17,57 @@ module.exports = {
         'NODE_ENV': JSON.stringify('production'),
       }
     }),
-     new HtmlWebpackPlugin({
-        template: 'src/index.html'
-     })
+      new HtmlWebpackPlugin({
+          template: 'src/index.html'
+      }),
+      new webpack.LoaderOptionsPlugin({
+          debug: false,
+          options: {
+              tslint: {
+                  emitErrors: true,
+                  failOnHint: true
+              },
+              resolve: {}
+          }
+      })
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
   },
   resolveLoader: {
-    'fallback': path.join(__dirname, 'node_modules')
+    modules: [ path.join(__dirname, 'node_modules') ]
   },
   module: {
-    preLoaders: [
-      {
-        test: /\.tsx?$/,
-        loader: 'tslint',
-        include: path.join(__dirname, 'src')
-      }
-    ],
-    loaders: [
-      {
-        test: /\.css$/,
-        loader: 'style!css'
-      },
-      {
-        test: /\.less$/,
-        loader: 'style!css!less',
-        include: path.join(__dirname, 'src/styles')
-      },
-      {
-        test: /\.(png|jpg)$/,
-        loader: 'url?limit=25000'
-      },
-      {
-        test: /\.(eot|svg|ttf|woff|woff2)$/,
-        loader: 'file?name=public/fonts/[name].[ext]'
-      },
+      rules: [
+          {
+              enforce: 'pre',
+              test: /\.tsx?$/,
+              loader: 'tslint-loader',
+              include: path.join(__dirname, 'src')
+          },
+          {
+              test: /\.css$/,
+              loader: 'style-loader!css-loader'
+          },
+          {
+              test: /\.less$/,
+              loader: 'style-loader!css-loader!less-loader',
+              include: path.join(__dirname, 'src/styles')
+          },
+          {
+              test: /\.(png|jpg)$/,
+              loader: 'url-loader?limit=25000'
+          },
+          {
+              test: /\.(eot|svg|ttf|woff|woff2)$/,
+              loader: 'file-loader?name=public/fonts/[name].[ext]'
+          },
 
-      {
-        test: /\.tsx?$/,
-        loader: 'babel!ts',
-        include: path.join(__dirname, 'src')
-      }
-    ]
-  },
-  tslint: {
-    emitErrors: true,
-    failOnHint: true
+          {
+              test: /\.tsx?$/,
+              loader: 'babel-loader!ts-loader',
+              include: path.join(__dirname, 'src')
+          }
+      ]
   }
 };

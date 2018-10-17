@@ -54,9 +54,11 @@ CMD java -javaagent:/app/elastic-apm-agent.jar\
                                         -Dspring.datasource.schema=${DATASOURCE_SCHEMA:-classpath*:db/hsqldb/initDB.sql}\
                                         -Dspring.datasource.data=${DATASOURCE_DATA:-classpath*:db/hsqldb/populateDB.sql}\
                                         -Delastic.apm.service_name=${ELASTIC_APM_SERVICE_NAME:-spring-petclinic}\
+                                        -Delastic.apm.service_version=${ELASTIC_APM_SERVICE_VERSION:-1.0.0}\
+                                        -Delastic.apm.span_frames_min_duration=${ELASTIC_APM_SPAN_FRAMES_MIN_DURATION:-5ms}\
+                                        -Delastic.apm.capture_body=${ELASTIC_APM_CAPTURE_BODY:-off}\
                                         -Delastic.apm.environment=production\
                                         -Delastic.apm.transaction_sample_rate=${APM_SAMPLE_RATE:-1.0}\
-                                        -Delastic.apm.capture_body=all\
                                         -Delastic.apm.server_urls=${ELASTIC_APM_SERVER_URL:-http://localhost:8200}\
                                         -Delastic.apm.verify_server_cert=false\
                                         -Delastic.apm.ignore_urls=/health,/metrics*,/jolokia\

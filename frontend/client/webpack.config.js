@@ -18,8 +18,6 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',
     publicPath: '/'
-    /* redbox-react/README.md */
-    // ,devtoolModuleFilenameTemplate: '/[absolute-resource-path]'
   },
   plugins: [
     new HtmlWebpackPlugin({
