@@ -13,8 +13,8 @@ fetch(fetchUrl)
   .then(response => response.json())
   .then(config => {
     let apm = initApm({
-       serviceName: config.apm_service_name,
-       serverUrl: config.apm_server,
+       serviceName: config.apm_service_name + '-react',
+       serverUrl: config.apm_server_js,
        serviceVersion: config.apm_service_version
     });
     apm.setInitialPageLoadName(window.location.pathname !== '' ? window.location.pathname : 'homepage');
