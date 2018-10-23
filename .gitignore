@@ -8,7 +8,7 @@ target/*
 **/node_modules
 **/typings
 generated/
-
+**DS_Store
 # Easier branch switching
 springboot-petclinic-client/
 springboot-petclinic-server/
