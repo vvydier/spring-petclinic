@@ -163,6 +163,7 @@ services:
       DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
       DATASOURCE_SCHEMA: classpath*:db/mysql/initDB.sql
       DATASOURCE_DATA: classpath*:db/mysql/populateDB.sql
+      INITIALIZE_DB: true
     depends_on:
       elasticsearch:
         condition: service_healthy
