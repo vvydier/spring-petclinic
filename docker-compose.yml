@@ -210,9 +210,10 @@ services:
     image: docker.elastic.co/demos/spring-petclinic-server-loadgen:${ES_VERSION}
     container_name: spring-petclinic-server-loadgen
     environment:
-      ENDPOINT_PORT: ${SERVER_PORT:-8000}
-      ENDPOINT_BASE: spring-petclinic-server
+      ENDPOINT_PORT: ${SERVER_PORT:-3000}
+      ENDPOINT_BASE: spring-petclinic-client
       ENDPOINT_PROTOCOL: http
+      DATA_FILES: /opt/data_files
     networks:
       spring-petclinic-net:
         aliases:

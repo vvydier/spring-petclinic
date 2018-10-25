@@ -16,6 +16,8 @@ RUN mkdir -p /tmp/dependencies \
 
 ENV PATH $PATH:$JMETER_BIN
 COPY jmeter-petclinic-server.jmx ${JMETER_HOME}
+RUN mkdir /opt/data_files
+COPY *.csv /opt/data_files/
 COPY entrypoint.sh /
 
 WORKDIR	${JMETER_HOME}
