@@ -53,7 +53,7 @@ CMD java -javaagent:/app/elastic-apm-agent.jar\
                                         -Dspring.jpa.hibernate.ddl-auto=${DDL_AUTO:-none}\
                                         -Dspring.datasource.schema=${DATASOURCE_SCHEMA:-classpath*:db/hsqldb/initDB.sql}\
                                         -Dspring.datasource.data=${DATASOURCE_DATA:-classpath*:db/hsqldb/populateDB.sql}\
-                                        -Delastic.apm.service_name=${ELASTIC_APM_SERVICE_NAME:-spring-petclinic}\
+                                        -Delastic.apm.service_name=${ELASTIC_APM_SERVICE_NAME:-petclinic-spring}\
                                         -Delastic.apm.service_version=${ELASTIC_APM_SERVICE_VERSION:-1.0.0}\
                                         -Delastic.apm.span_frames_min_duration=${ELASTIC_APM_SPAN_FRAMES_MIN_DURATION:-5ms}\
                                         -Delastic.apm.capture_body=${ELASTIC_APM_CAPTURE_BODY:-off}\
