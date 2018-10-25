@@ -1,9 +1,12 @@
 const { Chromeless } = require('chromeless')
 
-var baseUrl = process.env.PETCLINIC_BASE_URL || 'http://localhost:3000';
+var baseUrl = process.env.OPBEANS_BASE_URL || 'http://www.opbeans.com';
 var url = baseUrl
 var NUM_IPS = 1000;
 var RANDOM_IPS = loadRandomIPs();
+
+const chromeless = new Chromeless({ launchChrome: true,  waitTimeout: 30000 });
+
 
 function sleep(ms){
     return new Promise(resolve=>{
@@ -12,27 +15,41 @@ function sleep(ms){
 }
 
 async function run() {
-    const chromeless = new Chromeless({
-        launchChrome: true
-    });
+    url = await chromeless
+        .goto(url)
+        .setExtraHTTPHeaders({
+            'X-Forwarded-For': selectRandomIP()
+        })
+        .evaluate((url) => {
+        var links = document.querySelectorAll('a[href^="/"]');
+    var uniq_links = {};
+    for ( var i=0, len=links.length; i < len; i++ ) {
+        uniq_links[links[i].href] = links[i].href;
+    }
+    links = new Array();
+    for ( var key in uniq_links ) {
+        links.push(uniq_links[key]);
+    }
+    console.log(links)
+    if (links && links.length) {
+        var i = Math.floor(Math.random()*links.length);
+        return links[i];
+    } else {
+        //no links to follow so return to the base
+        return baseUrl;
+    }
+}, baseUrl);
+    console.log(url);
+}
 
-    for(;;){
-        url = await chromeless
-            .goto(url)
-            .setExtraHTTPHeaders({
-                'X-Forwarded-For': selectRandomIP()
-            })
-            .evaluate((baseUrl) => {
-            var links = document.querySelectorAll('a[href^="/"]');
-        if (links && links.length) {
-            var i = Math.floor(Math.random()*links.length)
-            return links[i].href
-        } else {
-            return baseUrl
-        }
-    }, baseUrl);
-        console.log(url)
-        await sleep(6000 + Math.floor(Math.random()*10000))
+async function safe_run() {
+    console.log('Starting from baseurl: '+url)
+    for(;;) {
+        run().catch(async (error) => {
+            console.log("failed for url")
+        console.log(error);
+    });
+        await sleep(6000 + Math.floor(Math.random()*10000));
     }
 }
 
@@ -69,4 +86,4 @@ function randomIp() {
     return ip;
 }
 
-run().catch(console.error.bind(console))
+safe_run().catch(console.error.bind(console))
