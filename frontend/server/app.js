@@ -9,7 +9,7 @@ var helmet = require('helmet');
 var index = require('./routes/index');
 var config = require('./routes/config');
 const settings = require('./config')
-
+var apm = require('elastic-apm-node')
 var app = express();
 var http = require('http');
 var router = express.Router();
@@ -25,12 +25,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index)
 app.use('/config', config)
 
+app.use('/api/find_address', proxy(settings.address_server, {
+    preserveHostHdr: true,
+    proxyReqPathResolver: function (req) {
+      apm.setTransactionName('/api/find_address')
+      return '/api/find_address'
+    }
+}))
+
 //sends /api/<endpoint> to <api_prefix>/<endpoint>
 app.use('/api', proxy(settings.api_server, {
+    preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
+      apm.setTransactionName('/api'+req.url)
       return settings.api_prefix+req.url
     }
 }))
+
+
 
 app.get('*', function(req,res) {
     res.sendFile(path.join(__dirname+'/public/index.html'));

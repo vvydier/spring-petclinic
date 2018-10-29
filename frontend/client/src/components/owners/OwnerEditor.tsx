@@ -4,6 +4,7 @@ import { IRouter, Link } from 'react-router';
 import { url, submitForm } from '../../util/index';
 
 import Input from '../form/Input';
+import AutocompleteInput from '../form/AutocompleteInput';
 
 import { Digits, NotEmpty } from '../form/Constraints';
 
@@ -74,7 +75,8 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
           <div className='form-group has-feedback'>
             <Input object={owner} error={error} constraint={NotEmpty} label='First Name' name='firstName' onChange={this.onInputChange} />
             <Input object={owner} error={error} constraint={NotEmpty} label='Last Name' name='lastName' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={NotEmpty} label='Address' name='address' onChange={this.onInputChange} />
+            <Input object={owner} error={error} constraint={NotEmpty} label='Zip Code' name='zipCode' onChange={this.onInputChange} />
+            <AutocompleteInput label='Address' name='address' />
             <Input object={owner} error={error} constraint={NotEmpty} label='City' name='city' onChange={this.onInputChange} />
             <Input object={owner} error={error} constraint={Digits(10)} label='Telephone' name='telephone' onChange={this.onInputChange} />
           </div>

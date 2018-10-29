@@ -1,0 +1,23 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "regexp": {
+            "post_code": {
+              "value": "{{post_code}}.*"
+            }
+          }
+        },
+        {
+          "match_phrase_prefix": {
+            "address": {
+              "query": "{{address}}",
+              "max_expansions": 10
+            }
+          }
+        }
+      ]
+    }
+  }
+}

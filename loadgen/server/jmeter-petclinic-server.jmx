@@ -1364,7 +1364,7 @@
             <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
           </JSONPostProcessor>
           <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract Random Pet Id" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract Random Pet" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">pet</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$[*]</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>

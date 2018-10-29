@@ -6,6 +6,15 @@ var apm = require('elastic-apm-node').start({
   serviceName: settings.apm_service_name+'-node',
   // Set custom APM Server URL (default: http://localhost:8200)
   serverUrl: settings.apm_server,
+  captureBody: "all",
+  errorOnAbortedRequests: true,
+  frameworkName: "express",
+  captureErrorLogStackTraces: "always",
+  sourceLinesErrorAppFrames: 10,
+  sourceLinesErrorLibraryFrames: 10,
+  sourceLinesSpanAppFrames: 5,
+  sourceLinesSpanLibraryFrames: 5,
+  transactionMaxSpans: -1
 })
 /**
  * Module dependencies.
@@ -19,7 +28,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.SERVER_PORT || '5000');
+var port = normalizePort(process.env.SERVER_PORT || '4000');
 app.set('port', port);
 
 /**

@@ -1,6 +1,6 @@
 const { Chromeless } = require('chromeless')
 
-var baseUrl = process.env.OPBEANS_BASE_URL || 'http://www.opbeans.com';
+var baseUrl = process.env.PETCLINIC_BASE_URL || 'http://www.opbeans.com';
 var url = baseUrl
 var NUM_IPS = 1000;
 var RANDOM_IPS = loadRandomIPs();
@@ -20,25 +20,25 @@ async function run() {
         .setExtraHTTPHeaders({
             'X-Forwarded-For': selectRandomIP()
         })
-        .evaluate((url) => {
-        var links = document.querySelectorAll('a[href^="/"]');
-    var uniq_links = {};
-    for ( var i=0, len=links.length; i < len; i++ ) {
-        uniq_links[links[i].href] = links[i].href;
-    }
-    links = new Array();
-    for ( var key in uniq_links ) {
-        links.push(uniq_links[key]);
-    }
-    console.log(links)
-    if (links && links.length) {
-        var i = Math.floor(Math.random()*links.length);
-        return links[i];
-    } else {
-        //no links to follow so return to the base
-        return baseUrl;
-    }
-}, baseUrl);
+        .evaluate((baseUrl, url) => {
+            var links = document.querySelectorAll('a[href^="/"]');
+            var uniq_links = {};
+            for ( var i=0, len=links.length; i < len; i++ ) {
+                uniq_links[links[i].href] = links[i].href;
+            }
+            links = new Array();
+            for ( var key in uniq_links ) {
+                links.push(uniq_links[key]);
+            }
+            console.log(links)
+            if (links && links.length) {
+                var i = Math.floor(Math.random()*links.length);
+                return links[i];
+            } else {
+                //no links to follow so return to the base
+                return baseUrl;
+            }
+        }, baseUrl, url);
     console.log(url);
 }
 

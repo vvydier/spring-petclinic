@@ -1,0 +1,15 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "regexp": {
+            "post_code": {
+              "value": "{{post_code}}.*"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
