@@ -5,7 +5,7 @@ import { url, submitForm } from '../../util/index';
 
 import Input from '../form/Input';
 import AutocompleteInput from '../form/AutocompleteInput';
-
+import { APMService } from '../../main';
 import { Digits, NotEmpty } from '../form/Constraints';
 
 import { IInputChangeHandler, IFieldError, IError, IOwner, IRouterContext } from '../../types/index';
@@ -37,20 +37,30 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     };
   }
 
+  componentWillMount() {
+    APMService.getInstance().startTransaction('OwnerEditor');
+  }
+
+  componentDidMount() {
+    APMService.getInstance().endTransaction();
+  }
+
   onSubmit(event) {
+    const { owner } = this.state;
+    const url = owner.isNew ? 'api/owners' : 'api/owners/' + owner.id;
+    APMService.getInstance().startTransaction( owner.isNew ? 'CreateOwner' : 'UpdateOwner');
     event.preventDefault();
 
-    const { owner } = this.state;
-
-    const url = owner.isNew ? 'api/owners' : 'api/owners/' + owner.id;
     submitForm(owner.isNew ? 'POST' : 'PUT', url, owner, (status, response) => {
       if (status === 204 || status === 201) {
+        APMService.getInstance().endTransaction();
         const owner_id = owner.isNew ? (response as IOwner).id : owner.id;
         this.context.router.push({
           pathname: '/owners/' + owner_id
         });
       } else {
-        console.log('ERROR?!...', response);
+        APMService.getInstance().endTransaction();
+        console.log('Error: ', response);
         this.setState({ error: response });
       }
     });

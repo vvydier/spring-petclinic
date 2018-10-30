@@ -1,6 +1,40 @@
 import { IHttpMethod } from '../types/index';
-
 export const url = (path: string): string => `/${path}`;
+import { APMService } from '../main';
+
+export const request = (path: string, onSuccess: (status: number, response: any) => any) => {
+  const requestUrl = url(path);
+  APMService.getInstance().startSpan('GET ' + requestUrl, 'http');
+  console.log('Fetching from ' + requestUrl);
+  return fetch(requestUrl)
+    .then(response =>  {
+        if (response.status < 400) {
+            response.json().then(result => {
+                APMService.getInstance().endSpan();
+                onSuccess(response.status, result);
+            });
+        } else {
+          APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${response.status} ${response.statusText}`);
+          APMService.getInstance().endSpan();
+          onSuccess(response.status, {});
+        }
+    });
+};
+
+export const request_promise = (path: string): any => {
+  const requestUrl = url(path);
+  console.log('Fetching from ' + requestUrl);
+  APMService.getInstance().startSpan('GET ' + requestUrl, 'http');
+  return fetch(requestUrl)
+    .then(response =>  {
+        if (response.status < 400) {
+            return response.json();
+        } else {
+          APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${response.status} ${response.statusText}`);
+          return null;
+        }
+    });
+};
 
 /**
  * path: relative PATH without host and port (i.e. '/api/123')
@@ -19,8 +53,24 @@ export const submitForm = (method: IHttpMethod, path: string, data: any, onSucce
     },
     body: JSON.stringify(data)
   };
-
+  APMService.getInstance().startSpan(method + requestUrl, 'http');
   console.log('Submitting to ' + method + ' ' + requestUrl);
   return fetch(requestUrl, fetchParams)
-    .then(response => response.status === 204 ? onSuccess(response.status, {}) : response.json().then(result => onSuccess(response.status, result)));
+    .then(response =>  {
+        if (response.status >= 400) {
+            APMService.getInstance().captureError(`Failed ${method} to ${requestUrl} - ${response.status} ${response.statusText}`);
+            APMService.getInstance().endSpan();
+            onSuccess(response.status, `Failed ${method} to ${requestUrl} - ${response.status} ${response.statusText}`);
+        } else {
+          if (response.status !== 204)  {
+            response.json().then(result => {
+                APMService.getInstance().endSpan();
+                onSuccess(response.status, result);
+            });
+          } else {
+            APMService.getInstance().endSpan();
+            onSuccess(response.status, {});
+          }
+        }
+    });
 };

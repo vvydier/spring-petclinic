@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { IRouter, Link } from 'react-router';
 import { url, submitForm } from '../../util/index';
-
+import { APMService } from '../../main';
 import Input from '../form/Input';
 import DateInput from '../form/DateInput';
 import SelectInput from '../form/SelectInput';
@@ -27,6 +27,14 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
   static contextTypes = {
     router: React.PropTypes.object.isRequired
   };
+
+  componentWillMount() {
+    APMService.getInstance().startTransaction('PetEditor');
+  }
+
+  componentDidMount() {
+    APMService.getInstance().endTransaction();
+  }
 
   constructor(props) {
     super(props);
@@ -63,13 +71,18 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
     if (!editablePet.isNew) {
       request.id = editablePet.id;
     }
+
     const url = editablePet.isNew ? 'api/pets' :  'api/pets/' + editablePet.id;
+    APMService.getInstance().startTransaction( editablePet.isNew ? 'CreatePet' : 'UpdatePet');
+
     submitForm(editablePet.isNew ? 'POST' : 'PUT', url, request, (status, response) => {
       if (status === 204 || status === 201) {
+        APMService.getInstance().endTransaction();
         this.context.router.push({
           pathname: '/owners/' + owner.id
         });
       } else {
+        APMService.getInstance().endTransaction();
         console.log('ERROR?!...', response);
         this.setState({ error: response });
       }

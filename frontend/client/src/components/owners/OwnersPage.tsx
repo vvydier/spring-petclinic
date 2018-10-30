@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import { Link } from 'react-router';
 import { IOwner } from '../../types/index';
-import { url } from '../../util/index';
-
+import { request } from '../../util/index';
 import OwnerInformation from './OwnerInformation';
 import PetsTable from './PetsTable';
+import { APMService } from '../../main';
 
 interface IOwnersPageProps {
   params?: { ownerId?: string };
@@ -23,14 +23,20 @@ export default class OwnersPage extends React.Component<IOwnersPageProps, IOwner
     this.state = {};
   }
 
+  componentWillMount() {
+    APMService.getInstance().startTransaction('OwnersPage');
+  }
+
   componentDidMount() {
     const { params } = this.props;
 
     if (params && params.ownerId) {
-      const fetchUrl = url(`api/owners/${params.ownerId}`);
-      fetch(fetchUrl)
-        .then(response => response.json())
-        .then(owner => this.setState({ owner }));
+      request(`api/owners/${params.ownerId}`, (status, owner) =>  {
+        this.setState({ owner });
+        APMService.getInstance().endTransaction();
+      });
+    } else {
+      APMService.getInstance().endTransaction();
     }
   }
 

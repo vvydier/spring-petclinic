@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { Link } from 'react-router';
+
 
 const MenuItem = ({active, url, title, children}: { active: boolean, url: string, title: string, children?: any }) => (
   <li className={active ? 'active' : ''}>
-    <a href={url} title={title}>{children}</a>
+    <Link to={url}>{children}</Link>
   </li>
 );
 

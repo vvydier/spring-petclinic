@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import { IRouter, Link } from 'react-router';
 import { IOwner, IRouterContext } from '../../types/index';
-import { url } from '../../util/index';
-
+import { request } from '../../util/index';
+import { APMService } from '../../main';
 import OwnersTable from './OwnersTable';
 
 
@@ -37,6 +37,11 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
     };
   }
 
+  componentWillMount() {
+    APMService.getInstance().startTransaction('FindOwnersPage');
+  }
+
+
   componentDidMount() {
     const { filter } = this.state;
     this.fetchData(filter);
@@ -69,7 +74,7 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
    */
   submitSearchForm() {
     const { filter } = this.state;
-
+    APMService.getInstance().startTransaction('FindOwnersPage: Filter');
     this.context.router.push({
       pathname: '/owners/list',
       query: { 'lastName': filter || '' }
@@ -82,11 +87,11 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
   fetchData(filter: string) {
     const query = encodeURIComponent(filter);
 
-    const requestUrl = filter && query !== '*' ? url('api/owners/*/lastname/' + query) : url('api/owners');
-
-    fetch(requestUrl)
-      .then(response => response.json())
-      .then(owners => { this.setState({ owners }); });
+    const requestUrl = filter && query !== '*' ? 'api/owners/*/lastname/' + query : 'api/owners';
+    request(requestUrl, (status, owners) =>  {
+      this.setState({ owners });
+      APMService.getInstance().endTransaction();
+    });
   }
 
   render() {
