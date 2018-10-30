@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import { IOwner, IPet, IPetType, IVisit, IError, IRouterContext } from '../../types/index';
 
-import { url, submitForm } from '../../util/index';
+import { url, request, submitForm } from '../../util/index';
 import { NotEmpty } from '../form/Constraints';
-
+import { APMService } from '../../main';
 import DateInput from '../form/DateInput';
 import Input from '../form/Input';
 import PetDetails from './PetDetails';
@@ -39,24 +39,25 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  componentWillMount() {
+    APMService.getInstance().startTransaction('VisitsPage');
+  }
+
   componentDidMount() {
     const { params } = this.props;
 
     if (params && params.ownerId) {
-      fetch(url(`api/owners/${params.ownerId}`))
-        .then(response => response.json())
-        .then(owner => this.setState(
-          {
-            owner: owner,
-            visit: { id: null, isNew: true, date: null, description: '' }
-          })
-        );
+
+      request(`api/owners/${params.ownerId}`, (status, owner) =>  {
+        this.setState( { owner: owner, visit: { id: null, isNew: true, date: null, description: '' } });
+        APMService.getInstance().endTransaction();
+      });
     }
   }
 
   onSubmit(event) {
     event.preventDefault();
-
+    APMService.getInstance().startTransaction('CreateVisit');
     const petId = this.props.params.petId;
     const { owner, visit } = this.state;
     let pet = owner.pets.find(candidate => candidate.id.toString() === petId);
@@ -85,10 +86,12 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
     const url = 'api/visits';
     submitForm('POST', url, request, (status, response) => {
       if (status === 201) {
+        APMService.getInstance().endTransaction();
         this.context.router.push({
           pathname: '/owners/' + owner.id
         });
       } else {
+        APMService.getInstance().endTransaction();
         console.log('ERROR?!...', response);
         this.setState({ error: response });
       }

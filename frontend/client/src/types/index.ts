@@ -31,6 +31,7 @@ export interface IConstraint {
 }
 
 export type IInputChangeHandler = (name: string, value: string, error: IFieldError) => void;
+export type IInputBlurHandler = (name: string, value: string) => void;
 
 export interface ISelectOption {
   value: string|number;

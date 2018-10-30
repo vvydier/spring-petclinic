@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IConstraint, IError, IInputChangeHandler } from '../../types/index';
+import { IConstraint, IError, IInputChangeHandler, IInputBlurHandler} from '../../types/index';
 
 import FieldFeedbackPanel from './FieldFeedbackPanel';
 
@@ -10,7 +10,7 @@ const NoConstraint: IConstraint = {
 };
 
 
-export default ({object, error, name, constraint = NoConstraint, label, onChange}: { object: any, error: IError, name: string, constraint?: IConstraint, label: string, onChange: IInputChangeHandler }) => {
+export default ({object, error, name, constraint = NoConstraint, label, onChange, onBlur }: { object: any, error: IError, name: string, constraint?: IConstraint, label: string, onChange: IInputChangeHandler, onBlur?: IInputBlurHandler }) => {
 
   const handleOnChange = event => {
     const { value } = event.target;
@@ -21,6 +21,12 @@ export default ({object, error, name, constraint = NoConstraint, label, onChange
 
     // invoke callback
     onChange(name, value, fieldError);
+  };
+
+  const handleOnBlur = event => {
+    const { value } = event.target;
+
+    onBlur(name, value);
   };
 
   const value = object[name];
@@ -34,7 +40,7 @@ export default ({object, error, name, constraint = NoConstraint, label, onChange
       <label className='col-sm-2 control-label'>{label}</label>
 
       <div className='col-sm-10'>
-        <input type='text' name={name} className='form-control' value={value} onChange={handleOnChange} />
+        <input type='text' name={name} className='form-control' value={value} onChange={handleOnChange} onBlur={handleOnBlur} />
 
          <FieldFeedbackPanel valid={valid} fieldError={fieldError} />
       </div>

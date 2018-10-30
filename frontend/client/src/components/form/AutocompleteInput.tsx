@@ -1,68 +1,9 @@
 import * as React from 'react';
 const Autosuggest = require('react-autosuggest');
-
+import { url } from '../../util/index';
 import { IConstraint, IError, IInputChangeHandler } from '../../types/index';
 
 import FieldFeedbackPanel from './FieldFeedbackPanel';
-
-const languages = [
-  {
-    name: 'C',
-    year: 1972
-  },
-  {
-    name: 'C#',
-    year: 2000
-  },
-  {
-    name: 'C++',
-    year: 1983
-  },
-  {
-    name: 'Clojure',
-    year: 2007
-  },
-  {
-    name: 'Elm',
-    year: 2012
-  },
-  {
-    name: 'Go',
-    year: 2009
-  },
-  {
-    name: 'Haskell',
-    year: 1990
-  },
-  {
-    name: 'Java',
-    year: 1995
-  },
-  {
-    name: 'Javascript',
-    year: 1995
-  },
-  {
-    name: 'Perl',
-    year: 1987
-  },
-  {
-    name: 'PHP',
-    year: 1995
-  },
-  {
-    name: 'Python',
-    year: 1991
-  },
-  {
-    name: 'Ruby',
-    year: 1995
-  },
-  {
-    name: 'Scala',
-    year: 2003
-  }
-];
 
 const NoConstraint: IConstraint = {
   message: '',
@@ -79,8 +20,6 @@ interface IAutocompleteState {
   suggestions?: any[];
 };
 
-
-
 export default class AutocompleteInput extends React.Component<IAutocompleteProps, IAutocompleteState> {
 
   constructor(props) {
@@ -91,34 +30,47 @@ export default class AutocompleteInput extends React.Component<IAutocompleteProp
     };
   }
 
-  escapeRegexCharacters(str) {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  };
-
-  getSuggestions (value) {
-    const escapedValue = this.escapeRegexCharacters(value.trim());
-    if (escapedValue === '') {
-      return [];
-    }
-    const regex = new RegExp('^' + escapedValue, 'i');
-    return languages.filter(language => regex.test(language.name));
-  };
-
   getSuggestionValue(suggestion) {
-    return suggestion.name;
+    return suggestion;
   }
 
   renderSuggestion(suggestion) {
     return (
-      <span>{suggestion.name}</span>
+      <span>{suggestion}</span>
     );
   }
 
   onSuggestionsFetchRequested = ({ value }) => {
-    const suggestions = this.getSuggestions(value);
-    this.setState({
-      suggestions: suggestions
-    });
+
+    const requestUrl = url('api/find_address');
+    const fetchParams = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        zip_code: value
+      })
+    };
+    // APMService.getInstance().startSpan(method + requestUrl, 'http');
+    fetch(requestUrl, fetchParams)
+      .then(response =>  {
+          if (response.status === 200) {
+              // APMService.getInstance().endSpan();
+              response.json().then(states => {
+                  // APMService.getInstance().endSpan();
+                  this.setState({
+                    suggestions: states.states
+                  });
+                  console.log(states);
+              });
+          } else {
+            // APMService.getInstance().captureError(`Failed ${method} to ${requestUrl} - ${response.status} ${response.statusText}`);
+
+
+          }
+      });
   };
 
   onSuggestionsClearRequested = () => {

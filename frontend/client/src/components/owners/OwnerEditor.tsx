@@ -4,6 +4,7 @@ import { IRouter, Link } from 'react-router';
 import { url, submitForm } from '../../util/index';
 
 import Input from '../form/Input';
+import SelectInput from '../form/SelectInput';
 import AutocompleteInput from '../form/AutocompleteInput';
 import { APMService } from '../../main';
 import { Digits, NotEmpty } from '../form/Constraints';
@@ -30,6 +31,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   constructor(props) {
     super(props);
     this.onInputChange = this.onInputChange.bind(this);
+    this.onZipChange = this.onZipChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
@@ -76,8 +78,15 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     });
   }
 
+  onZipChange(name: string, value: string) {
+    console.log('zip change ' + value);
+  }
+
   render() {
     const { owner, error } = this.state;
+
+    const cities = [{'name': 'new_york', 'value': 'New York'}];
+    const states = [{'name': 'new_york', 'value': 'New York'}];
     return (
       <span>
         <h2>{owner.isNew ? 'Add Owner' : 'Update Owner'}</h2>
@@ -85,9 +94,10 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
           <div className='form-group has-feedback'>
             <Input object={owner} error={error} constraint={NotEmpty} label='First Name' name='firstName' onChange={this.onInputChange} />
             <Input object={owner} error={error} constraint={NotEmpty} label='Last Name' name='lastName' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={NotEmpty} label='Zip Code' name='zipCode' onChange={this.onInputChange} />
-            <AutocompleteInput label='Address' name='address' />
-            <Input object={owner} error={error} constraint={NotEmpty} label='City' name='city' onChange={this.onInputChange} />
+            <Input object={owner} error={error} constraint={NotEmpty} label='Zip Code' name='zipCode' onChange={this.onInputChange} onBlur={this.onZipChange} />
+            <SelectInput object={owner} error={error} size={1} label='State' name='state' options={states} onChange={this.onInputChange} />
+            <SelectInput object={owner} error={error} size={1} label='City' name='city' options={cities} onChange={this.onInputChange} />
+            <Input object={owner} error={error} constraint={NotEmpty} label='Address' name='address' onChange={this.onInputChange} />
             <Input object={owner} error={error} constraint={Digits(10)} label='Telephone' name='telephone' onChange={this.onInputChange} />
           </div>
           <div className='form-group'>

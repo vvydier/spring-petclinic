@@ -115,7 +115,7 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
 
             <Input object={editablePet} error={error} label='Name' name='name' onChange={this.onInputChange} />
             <DateInput object={editablePet} error={error} label='Birth date' name='birthDate' onChange={this.onInputChange} />
-            <SelectInput object={editablePet} error={error} label='Type' name='type_id' options={pettypes} onChange={this.onInputChange} />
+            <SelectInput object={editablePet} error={error} size={5} label='Type' name='type_id' options={pettypes} onChange={this.onInputChange} />
           </div>
           <div className='form-group'>
             <div className='col-sm-offset-2 col-sm-10'>
