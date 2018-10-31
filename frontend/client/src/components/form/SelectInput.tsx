@@ -16,13 +16,13 @@ export default ({object, error, size, name, label, disabled, options, onChange }
   const valid = !fieldError && selectedValue !== '';
 
   const cssGroup = `form-group ${fieldError ? 'has-error' : ''}`;
-
+  const num = size > 1 ? size : -1;
   return (
     <div className={cssGroup}>
       <label className='col-sm-2 control-label'>{label}</label>
 
       <div className='col-sm-10'>
-        <select size={size} className='form-control' name={name} onChange={handleOnChange} value={selectedValue} disabled={ disabled }>
+        <select size={num} className='form-control' name={name} onChange={handleOnChange} value={selectedValue} disabled={ disabled }>
           {options.map(option => <option key={option.value} value={option.value as string}>{option.name}</option>)}
         </select>
 

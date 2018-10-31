@@ -24,8 +24,8 @@ export default class EditOwnerPage extends React.Component<IEditOwnerPageProps, 
 
     if (params && params.ownerId) {
       request(`api/owners/${params.ownerId}`, (status, owner) =>  {
-        this.setState({ owner });
         APMService.getInstance().endTransaction();
+        this.setState({ owner });
       });
     } else {
       APMService.getInstance().endTransaction();

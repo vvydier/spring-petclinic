@@ -41,7 +41,7 @@ export const request_promise = (path: string, method = 'GET', data?: any): any =
             return response.json();
         } else {
           APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${response.status} ${response.statusText}`);
-          return null;
+          return {};
         }
     });
 };

@@ -1,7 +1,7 @@
 from flask import jsonify, app
 from flask import request
 
-from Search import StateSearch
+from Search import StateSearch, CitySearch, AddressSearch
 from api import bp
 
 
