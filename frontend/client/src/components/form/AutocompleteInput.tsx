@@ -1,7 +1,7 @@
 import * as React from 'react';
 const Autosuggest = require('react-autosuggest');
 import { url } from '../../util/index';
-import { IConstraint, IError, IInputChangeHandler } from '../../types/index';
+import { IConstraint, IError, IInputFetchHandler, IInputValueHandler } from '../../types/index';
 
 import FieldFeedbackPanel from './FieldFeedbackPanel';
 
@@ -13,10 +13,12 @@ const NoConstraint: IConstraint = {
 interface IAutocompleteProps {
   name: string;
   label: string;
+  value: string;
+  onFetch: IInputFetchHandler;
+  onChange: IInputValueHandler;
 };
 
 interface IAutocompleteState {
-  value?: '';
   suggestions?: any[];
 };
 
@@ -25,7 +27,6 @@ export default class AutocompleteInput extends React.Component<IAutocompleteProp
   constructor(props) {
     super(props);
     this.state = {
-      value: '',
       suggestions: []
     };
   }
@@ -41,36 +42,12 @@ export default class AutocompleteInput extends React.Component<IAutocompleteProp
   }
 
   onSuggestionsFetchRequested = ({ value }) => {
-
-    const requestUrl = url('api/find_address');
-    const fetchParams = {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        zip_code: value
-      })
-    };
-    // APMService.getInstance().startSpan(method + requestUrl, 'http');
-    fetch(requestUrl, fetchParams)
-      .then(response =>  {
-          if (response.status === 200) {
-              // APMService.getInstance().endSpan();
-              response.json().then(states => {
-                  // APMService.getInstance().endSpan();
-                  this.setState({
-                    suggestions: states.states
-                  });
-                  console.log(states);
-              });
-          } else {
-            // APMService.getInstance().captureError(`Failed ${method} to ${requestUrl} - ${response.status} ${response.statusText}`);
-
-
-          }
+    console.log('fetch value: ' + value);
+    this.props.onFetch(value, (data) => {
+      this.setState({
+        suggestions: data
       });
+    });
   };
 
   onSuggestionsClearRequested = () => {
@@ -79,30 +56,19 @@ export default class AutocompleteInput extends React.Component<IAutocompleteProp
     });
   };
 
-
-
   onChange = (event, { newValue, method }) => {
-    this.setState({
-      value: newValue
-    });
+    this.props.onChange(newValue);
   };
 
   render() {
-
-    const { value, suggestions } = this.state;
+    const { suggestions } = this.state;
+    const value = this.props.value;
     const inputProps = {
       placeholder: '',
       value,
       onChange: this.onChange
     };
-    const valid = true;
-    const fieldError = {
-      field: '',
-      message: ''
-    };
-
     const cssGroup = `form-group`;
-
     return (
         <div className={cssGroup}>
           <label className='col-sm-2 control-label'>{this.props.label}</label>

@@ -69,6 +69,8 @@ public class JacksonCustomPetSerializer extends StdSerializer<Pet> {
 		jgen.writeStringField("lastName", owner.getLastName());
 		jgen.writeStringField("address", owner.getAddress());
 		jgen.writeStringField("city", owner.getCity());
+        jgen.writeStringField("zipCode", owner.getZipCode());
+        jgen.writeStringField("state", owner.getState());
 		jgen.writeStringField("telephone", owner.getTelephone());
 		jgen.writeEndObject(); // owner
 		// write visits array

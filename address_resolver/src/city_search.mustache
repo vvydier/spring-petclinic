@@ -15,25 +15,17 @@
               "value": "{{state}}"
             }
           }
-        },
-        {
-          "term": {
-            "city.keyword": {
-              "value": "{{city}}"
-            }
-          }
-        },
-        {
-          "match": {
-            "address": {
-              "query": "{{address}}",
-              "operator": "and"
-            }
-          }
         }
       ]
     }
   },
-  "size":10,
-  "_source": "address"
+  "aggs": {
+    "city": {
+      "terms": {
+        "field": "city.keyword",
+        "size": 20
+      }
+    }
+  },
+  "size":0
 }

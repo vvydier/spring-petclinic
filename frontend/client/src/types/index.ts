@@ -32,6 +32,8 @@ export interface IConstraint {
 
 export type IInputChangeHandler = (name: string, value: string, error: IFieldError) => void;
 export type IInputBlurHandler = (name: string, value: string) => void;
+export type IInputFetchHandler = (value: string, onSuccess: (data: any) => void ) => void;
+export type IInputValueHandler = (value: string ) => void;
 
 export interface ISelectOption {
   value: string|number;
@@ -96,6 +98,8 @@ export interface IPetRequest {
 export interface IOwner extends IPerson {
   address: string;
   city: string;
+  state?: string,
+  zip_code?: string,
   telephone: string;
   pets: IPet[];
 };

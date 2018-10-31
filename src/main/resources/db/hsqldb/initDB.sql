@@ -40,7 +40,9 @@ CREATE TABLE owners (
   first_name VARCHAR(30),
   last_name  VARCHAR_IGNORECASE(30),
   address    VARCHAR(255),
+  state      VARCHAR(25),
   city       VARCHAR(80),
+  zip_code   VARCHAR(10),
   telephone  VARCHAR(20)
 );
 CREATE INDEX owners_last_name ON owners (last_name);

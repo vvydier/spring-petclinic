@@ -82,6 +82,9 @@ public class OwnerRestControllerTests {
     	owner.setLastName("Franklin");
     	owner.setAddress("110 W. Liberty St.");
     	owner.setCity("Madison");
+    	owner.setZipCode("53701");
+    	owner.setState("Wisconsin");
+
     	owner.setTelephone("6085551023");
     	owners.add(owner);
 
@@ -92,6 +95,8 @@ public class OwnerRestControllerTests {
     	owner.setAddress("638 Cardinal Ave.");
     	owner.setCity("Sun Prairie");
     	owner.setTelephone("6085551749");
+        owner.setZipCode("53590");
+        owner.setState("Wisconsin");
     	owners.add(owner);
 
     	owner = new Owner();
@@ -101,6 +106,8 @@ public class OwnerRestControllerTests {
     	owner.setAddress("2693 Commerce St.");
     	owner.setCity("McFarland");
     	owner.setTelephone("6085558763");
+        owner.setZipCode("53558");
+        owner.setState("Wisconsin");
     	owners.add(owner);
 
     	owner = new Owner();
@@ -110,6 +117,8 @@ public class OwnerRestControllerTests {
     	owner.setAddress("563 Friendly St.");
     	owner.setCity("Windsor");
     	owner.setTelephone("6085553198");
+        owner.setZipCode("53598");
+        owner.setState("Wisconsin");
     	owners.add(owner);
 
 

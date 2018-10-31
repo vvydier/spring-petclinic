@@ -25,6 +25,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index)
 app.use('/config', config)
 
+app.use('/api/find_state', proxy(settings.address_server, {
+    preserveHostHdr: true,
+    proxyReqPathResolver: function (req) {
+      apm.setTransactionName('/api/find_state')
+      return '/api/find_state'
+    }
+}))
+
+app.use('/api/find_city', proxy(settings.address_server, {
+    preserveHostHdr: true,
+    proxyReqPathResolver: function (req) {
+      apm.setTransactionName('/api/find_city')
+      return '/api/find_city'
+    }
+}))
+
 app.use('/api/find_address', proxy(settings.address_server, {
     preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
@@ -41,8 +57,6 @@ app.use('/api', proxy(settings.api_server, {
       return settings.api_prefix+req.url
     }
 }))
-
-
 
 app.get('*', function(req,res) {
     res.sendFile(path.join(__dirname+'/public/index.html'));

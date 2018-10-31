@@ -87,6 +87,8 @@ public class VisitRestControllerTests {
     	owner.setLastName("Rodriquez");
     	owner.setAddress("2693 Commerce St.");
     	owner.setCity("McFarland");
+        owner.setState("Wisconsin");
+        owner.setZipCode("53558");
     	owner.setTelephone("6085558763");
 
     	PetType petType = new PetType();

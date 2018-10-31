@@ -90,6 +90,8 @@ public class JacksonCustomVisitSerializer extends StdSerializer<Visit> {
 		jgen.writeStringField("lastName", owner.getLastName());
 		jgen.writeStringField("address", owner.getAddress());
 		jgen.writeStringField("city", owner.getCity());
+        jgen.writeStringField("state", owner.getState());
+        jgen.writeStringField("zipCode", owner.getZipCode());
 		jgen.writeStringField("telephone", owner.getTelephone());
 		jgen.writeEndObject(); // owner
 		jgen.writeEndObject(); // pet

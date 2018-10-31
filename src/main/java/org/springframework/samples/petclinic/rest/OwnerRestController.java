@@ -118,6 +118,8 @@ public class OwnerRestController {
 		}
 		currentOwner.setAddress(owner.getAddress());
 		currentOwner.setCity(owner.getCity());
+        currentOwner.setZipCode(owner.getZipCode());
+        currentOwner.setState(owner.getState());
 		currentOwner.setFirstName(owner.getFirstName());
 		currentOwner.setLastName(owner.getLastName());
 		currentOwner.setTelephone(owner.getTelephone());

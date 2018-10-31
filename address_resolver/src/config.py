@@ -7,7 +7,7 @@ class Config(object):
     ELASTICSEARCH_PASSWORD = os.getenv('ELASTICSEARCH_PASSWORD', 'changeme')
     ADDRESSES_PER_PAGE=int(os.getenv('ADDRESSES_PER_PAGE','25'))
     QUERY_TEMPLATE = os.getenv('QUERY_TEMPLATE','query.mustache')
-    ADDRESS_INDEX = os.getenv('ADDRESS_INDEX','addresses-2')
+    ADDRESS_INDEX = os.getenv('ADDRESS_INDEX','address')
     ELASTIC_APM = {
         'SERVICE_NAME': os.getenv('ELASTIC_APM_SERVICE_NAME','address-finder'),
         'SERVER_URL': os.getenv('ELASTIC_APM_SERVER_URL','http://localhost:8200'),

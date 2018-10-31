@@ -140,7 +140,7 @@ public class JdbcPetRepositoryImpl implements PetRepository {
 				new HashMap<String,
 				Object>(), BeanPropertyRowMapper.newInstance(PetType.class));
 		Collection<Owner> owners = this.namedParameterJdbcTemplate.query(
-				"SELECT id, first_name, last_name, address, city, telephone FROM owners ORDER BY last_name",
+				"SELECT id, first_name, last_name, address, city, telephone, state, zip_code FROM owners ORDER BY last_name",
 				new HashMap<String, Object>(),
 				BeanPropertyRowMapper.newInstance(Owner.class));
 		for (JdbcPet jdbcPet : jdbcPets) {

@@ -59,7 +59,9 @@ export class APMService {
     if (APMService.instance.ready && !APMService.instance.open) {
       console.log('Starting transaction - ' + name + ':');
       // in case one has been opened
-      APMService.instance.apm.getCurrentTransaction().end();
+      if (APMService.instance.apm.getCurrentTransaction()) {
+        APMService.instance.apm.getCurrentTransaction().end();
+      }
       let transaction = APMService.instance.apm.startTransaction(name, 'react');
       console.log(transaction);
       APMService.instance.open = true;

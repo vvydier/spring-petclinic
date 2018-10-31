@@ -94,6 +94,8 @@ public abstract class AbstractClinicServiceTests {
         owner.setLastName("Schultz");
         owner.setAddress("4, Evans Street");
         owner.setCity("Wollongong");
+        owner.setState("Wisconsin");
+        owner.setZipCode("53558");
         owner.setTelephone("4444444444");
         this.clinicService.saveOwner(owner);
         assertThat(owner.getId().longValue()).isNotEqualTo(0);

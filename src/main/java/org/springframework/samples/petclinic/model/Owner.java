@@ -57,6 +57,14 @@ public class Owner extends Person {
     @NotEmpty
     private String address;
 
+    @Column(name = "zip_code")
+    @NotEmpty
+    private String zipCode;
+
+    @Column(name = "state")
+    @NotEmpty
+    private String state;
+
     @Column(name = "city")
     @NotEmpty
     private String city;
@@ -84,6 +92,22 @@ public class Owner extends Person {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getZipCode() {
+        return this.zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getState() {
+        return this.state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getTelephone() {
@@ -154,6 +178,8 @@ public class Owner extends Person {
             .append("new", this.isNew())
             .append("lastName", this.getLastName())
             .append("firstName", this.getFirstName())
+            .append("zip_code", this.getZipCode())
+            .append("state", this.getState())
             .append("address", this.address)
             .append("city", this.city)
             .append("telephone", this.telephone)
