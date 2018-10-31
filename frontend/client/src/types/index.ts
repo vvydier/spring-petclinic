@@ -99,7 +99,7 @@ export interface IOwner extends IPerson {
   address: string;
   city: string;
   state?: string,
-  zip_code?: string,
+  zipCode?: string,
   telephone: string;
   pets: IPet[];
 };

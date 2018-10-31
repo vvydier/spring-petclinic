@@ -32,14 +32,13 @@ export default class EditPetPage extends React.Component<IEditPetPageProps, IEdi
 
     const { params } = this.props;
 
-
+    APMService.getInstance().startSpan(`GET api/pets/${params.petId}`, 'http');
     const loadPetPromise = request_promise(`api/pets/${params.petId}`);
-
     createPetEditorModel(this.props.params.ownerId, loadPetPromise)
       .then(model => {
-            this.setState(model);
             APMService.getInstance().endSpan();
             APMService.getInstance().endTransaction();
+            this.setState(model);
           }
       );
   }

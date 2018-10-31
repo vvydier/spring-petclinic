@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { IRouter, Link } from 'react-router';
-import { url, submitForm } from '../../util/index';
+import { url, submitForm, request_promise } from '../../util/index';
 import Input from '../form/Input';
 import SelectInput from '../form/SelectInput';
 import AutocompleteInput from '../form/AutocompleteInput';
@@ -42,6 +42,8 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     this.onAddressFetch = this.onAddressFetch.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
+
+
     this.state = {
       owner: Object.assign({}, props.initialOwner),
       states: [{'value': '', 'name': ''}],
@@ -55,7 +57,21 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   }
 
   componentDidMount() {
-    APMService.getInstance().endTransaction();
+    return Promise.all(
+      [
+        request_promise('api/find_state', 'POST', { zip_code: this.state.owner.zipCode }),
+        request_promise('api/find_city', 'POST', { zip_code: this.state.owner.zipCode, state: this.state.owner.state })
+      ]
+    ).then(response => {
+      let states = response[0].states.map(state => ({ value: state, name: state }));
+      states.unshift({'value': '', 'name': ''});
+      let cities = response[1].cities.map(state => ({ value: state, name: state }));
+      cities.unshift({'value': '', 'name': ''});
+      this.setState({
+        states: states,
+        cities: cities
+      });
+    });
   }
 
   onSubmit(event) {
@@ -117,7 +133,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
 
   onZipChange(name: string, value: string) {
     const { owner } = this.state;
-    if (value.trim() !== '' && owner.zip_code !== value) {
+    if (value.trim() !== '' && owner.zipCode !== value) {
       const requestUrl = url('api/find_state');
       const fetchParams = this.buildParams({ zip_code: value });
       this.address_service_fetch(requestUrl, fetchParams, (data) => {
@@ -136,7 +152,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   onStateChange(name: string, value: string, fieldError: IFieldError) {
     const requestUrl = url('api/find_city');
     const { owner } = this.state;
-    const fetchParams = this.buildParams({ zip_code: owner.zip_code, state: value });
+    const fetchParams = this.buildParams({ zip_code: owner.zipCode, state: value });
     const modifiedOwner = Object.assign({}, owner, { [name]: value, ['city']: '' });
     this.setState({
       owner: modifiedOwner
@@ -162,7 +178,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     console.log(value);
     const requestUrl = url('api/find_address');
     const { owner } = this.state;
-    const fetchParams = this.buildParams({ zip_code: owner.zip_code, state: owner.state, city: owner.city, address: value });
+    const fetchParams = this.buildParams({ zip_code: owner.zipCode, state: owner.state, city: owner.city, address: value });
     console.log(fetchParams);
     this.address_service_fetch(requestUrl, fetchParams, (data) => {
       onSuccess(data.addresses);
@@ -180,6 +196,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
 
   render() {
     const { owner, error, states, cities, addresses } = this.state;
+    console.log(owner);
     return (
       <span>
         <h2>{owner.isNew ? 'Add Owner' : 'Update Owner'}</h2>
@@ -187,7 +204,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
           <div className='form-group has-feedback'>
             <Input object={owner} error={error} constraint={NotEmpty} label='First Name' name='firstName' onChange={this.onInputChange} />
             <Input object={owner} error={error} constraint={NotEmpty} label='Last Name' name='lastName' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={NotEmpty} label='Zip Code' name='zip_code' onBlur={this.onZipChange} />
+            <Input object={owner} error={error} constraint={NotEmpty} label='Zip Code' name='zipCode' onBlur={this.onZipChange} />
             <SelectInput object={owner} size={1} label='State' name='state' options={states} onChange={this.onStateChange} disabled={states.length === 1} />
             <SelectInput object={owner} error={error} size={1} label='City' name='city' options={cities} onChange={this.onCityChange} disabled={cities.length === 1}/>
             <AutocompleteInput value={owner.address} label='Address' name='address' onFetch={this.onAddressFetch} onChange={this.onAddressChange} />

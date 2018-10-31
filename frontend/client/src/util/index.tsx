@@ -21,11 +21,21 @@ export const request = (path: string, onSuccess: (status: number, response: any)
     });
 };
 
-export const request_promise = (path: string): any => {
+export const request_promise = (path: string, method = 'GET', data?: any): any => {
   const requestUrl = url(path);
+  let fetchParams = {
+    method: method,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  };
+  if (data) {
+    fetchParams['body'] = JSON.stringify(data);
+  }
+  console.log(fetchParams);
   console.log('Fetching from ' + requestUrl);
-  APMService.getInstance().startSpan('GET ' + requestUrl, 'http');
-  return fetch(requestUrl)
+  return fetch(requestUrl, fetchParams)
     .then(response =>  {
         if (response.status < 400) {
             return response.json();
