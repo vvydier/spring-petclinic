@@ -1,8 +1,9 @@
 from flask import jsonify, app
 from flask import request
 
+from Search import StateSearch
 from api import bp
-from search import StateSearch, CitySearch, AddressSearch
+
 
 
 def check_parameters(req, params):
