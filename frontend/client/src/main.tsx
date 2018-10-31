@@ -28,6 +28,18 @@ export class APMService {
            errorThrottleLimit: 1000
         });
         this.apm.setInitialPageLoadName(window.location.pathname !== '' ? window.location.pathname : 'homepage');
+        // remove apm-server RUM events
+        this.apm.addFilter(function (payload) {
+          if (payload.transactions) {
+            payload.transactions.filter(function (tr) {
+              return tr.spans.some(function (span) {
+                return (span.context && span.context.http && span.context.http.url && span.context.http.url.includes('v1/rum/transactions'));
+              });
+            });
+          };
+          // Make sure to return the payload
+          return payload;
+        });
         APMService.instance.ready = true;
       });
   }
@@ -46,6 +58,8 @@ export class APMService {
   startTransaction(name) {
     if (APMService.instance.ready && !APMService.instance.open) {
       console.log('Starting transaction - ' + name + ':');
+      // in case one has been opened
+      APMService.instance.apm.getCurrentTransaction().end();
       let transaction = APMService.instance.apm.startTransaction(name, 'react');
       console.log(transaction);
       APMService.instance.open = true;
