@@ -18,7 +18,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.6",
-    "elastic-apm-js-base": "^1.0.0",
+    "elastic-apm-js-base": "git+https://git@github.com/elastic/apm-agent-js-base.git",
     "moment": "^2.22.2",
     "react": "^15.5.8",
     "react-autosuggest": "^9.4.2",
