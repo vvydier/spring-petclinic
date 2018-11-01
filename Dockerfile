@@ -3,7 +3,7 @@
 #Build application stage
 #We need maven.
 FROM maven:3.5.3-jdk-10
-ARG JAVA_AGENT_BRANCH=0.7
+ARG JAVA_AGENT_BRANCH=master
 ARG JAVA_AGENT_REPO=elastic/apm-agent-java
 
 WORKDIR /usr/src/java-app
