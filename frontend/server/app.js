@@ -53,7 +53,7 @@ app.use('/api/find_address', proxy(settings.address_server, {
 app.use('/api', proxy(settings.api_server, {
     preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
-      apm.setTransactionName('/api'+req.url)
+      apm.setTransactionName('/api/'+req.url.split('/').filter(c => c != '').slice(0,1)[0])
       return settings.api_prefix+req.url
     }
 }))

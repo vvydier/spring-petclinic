@@ -50,10 +50,10 @@ def find_address():
     if request.method == 'POST':
         if request.headers['Content-Type'] == 'application/json':
             req_data = request.get_json()
-            missing = check_parameters(req_data, ["zip_code","state","city","address"])
+            missing = check_parameters(req_data, ["zip_code","state","city"])
             if len(missing) > 0:
                 return jsonify({"success": False, "message": missing}), 404
-            response = AddressSearch(zip_code=req_data['zip_code'], state=req_data['state'], city=req_data['city'], address=req_data['address']).query()
+            response = AddressSearch(zip_code=req_data['zip_code'], state=req_data['state'], city=req_data['city'], address=req_data['address'] if 'address' in req_data else '' ).query()
             response['success'] = True
             return jsonify(response), 200
 

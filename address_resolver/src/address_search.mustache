@@ -5,7 +5,7 @@
         {
           "regexp": {
             "zip_code": {
-              "value": "{{zip_code}}.*"
+              "value": "{{zip_code}}    "
             }
           }
         },
@@ -27,7 +27,8 @@
           "match": {
             "address": {
               "query": "{{address}}",
-              "operator": "and"
+              "operator": "and",
+              "zero_terms_query": "all"
             }
           }
         }
