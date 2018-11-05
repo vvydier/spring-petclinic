@@ -1,3 +1,4 @@
+address_resolver/src/src/
 target/*
 .settings/*
 .classpath

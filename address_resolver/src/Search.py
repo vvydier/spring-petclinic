@@ -2,7 +2,6 @@ import json
 from flask import current_app
 import pystache
 
-
 class StateSearch():
     query_renderer = pystache.Renderer()
 
