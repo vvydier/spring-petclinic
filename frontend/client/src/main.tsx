@@ -23,7 +23,7 @@ export class APMService {
   private setup_apm() {
       fetch(url('config')).then(response => response.json()).then(config =>  {
         this.apm = initApm({
-           serviceName: config.apm_service_name + '-react',
+           serviceName: config.apm_client_service_name,
            serverUrl: config.apm_server_js,
            serviceVersion: config.apm_service_version,
            transactionThrottleLimit: 1000,
