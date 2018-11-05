@@ -4,6 +4,7 @@ var apm = require('elastic-apm-node').start({
   // Override service name from package.json
   // Allowed characters: a-z, A-Z, 0-9, -, _, and space
   serviceName: settings.apm_service_name+'-node',
+  serviceVersion: settings.apm_service_version,
   // Set custom APM Server URL (default: http://localhost:8200)
   serverUrl: settings.apm_server,
   captureBody: "all",
