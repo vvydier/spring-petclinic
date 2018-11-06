@@ -11,9 +11,11 @@ export default (ownerId: string, petLoaderPromise: Promise<any>): Promise<any> =
       xhr_request_promise('api/owners/' + ownerId),
       petLoaderPromise,
     ]
-  ).then(results => ({
-    pettypes: results[0],
-    owner: results[1],
-    pet: results[2]
-  }));
+  ).then(results => {
+    return {
+      pettypes: results[0],
+      owner: results[1],
+      pet: results[2]
+    };
+  });
 };

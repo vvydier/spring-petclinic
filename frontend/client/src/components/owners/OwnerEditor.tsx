@@ -35,7 +35,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     this.onInputChange = this.onInputChange.bind(this);
     this.onZipChange = this.onZipChange.bind(this);
     this.address_service_fetch = this.address_service_fetch.bind(this);
-    this.buildParams = this.buildParams.bind(this);
+    this.xhr_address_service_fetch = this.xhr_address_service_fetch.bind(this);
     this.onStateChange = this.onStateChange.bind(this);
     this.onCityChange = this.onCityChange.bind(this);
     this.onAddressChange = this.onAddressChange.bind(this);
@@ -54,7 +54,6 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   }
 
   componentDidMount() {
-    APMService.getInstance().startSpan('POST api/find_state', 'http');
     return Promise.all(
       [
         xhr_request_promise('api/find_state', 'POST', { zip_code: this.state.owner.zipCode }),
@@ -66,7 +65,6 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
       states.unshift({'value': '', 'name': ''});
       let cities = response[1] && response[1].cities ? response[1].cities.map(state => ({ value: state, name: state })) : [];
       cities.unshift({'value': '', 'name': ''});
-      APMService.getInstance().endSpan();
       APMService.getInstance().endTransaction();
       this.setState({
         states: states,
@@ -106,42 +104,51 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     });
   }
 
-  buildParams(data: any) {
-    return {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    };
-  }
-
-
   address_service_fetch = (requestUrl: string, fetchParams: any, onSuccess: (data: any) => void) => {
-    APMService.getInstance().startSpan('POST ' + requestUrl, 'http');
     fetch(requestUrl, fetchParams)
       .then(response =>  {
           if (response.status === 200) {
               response.json().then(data => {
-                  APMService.getInstance().endSpan();
                   onSuccess(data);
               });
           } else {
             APMService.getInstance().captureError(`Failed POST on ${requestUrl} - ${response.status} ${response.statusText}`);
-            APMService.getInstance().endSpan();
             onSuccess(null);
           }
       });
   }
+
+  // temporarily needed as fetch isn't supported by Elastic APM
+  xhr_address_service_fetch = (requestUrl: string, body: any, onSuccess: (data: any) => void) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', requestUrl, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function(e) {
+      if (xhr.status ===  200) {
+          onSuccess(JSON.parse(xhr.responseText));
+      } else {
+        APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
+        onSuccess(null);
+      }
+    };
+    xhr.onerror = function(e) {
+       APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
+       onSuccess(null);
+    };
+    let payload = null;
+    if (body) {
+      payload = JSON.stringify(body);
+    }
+    xhr.send(payload);
+  };
+
 
   onZipChange(name: string, value: string) {
     const { owner } = this.state;
     if (value.trim() !== '' && owner.zipCode !== value) {
       APMService.getInstance().startTransaction('OwnerEditor:ZipChange');
       const requestUrl = url('api/find_state');
-      const fetchParams = this.buildParams({ zip_code: value });
-      this.address_service_fetch(requestUrl, fetchParams, (data) => {
+      this.xhr_address_service_fetch(requestUrl, { zip_code: value }, (data) => {
         if (data) {
           let states = data.states ? data.states.map(state => ({ value: state, name: state })) : [];
           const modifiedOwner = Object.assign({}, owner, { [name]: value, ['state']: '', ['city']: '' });
@@ -164,12 +171,11 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     APMService.getInstance().startTransaction('OwnerEditor:StateChange');
     const requestUrl = url('api/find_city');
     const { owner } = this.state;
-    const fetchParams = this.buildParams({ zip_code: owner.zipCode, state: value });
     const modifiedOwner = Object.assign({}, owner, { [name]: value, ['city']: '' });
     this.setState({
       owner: modifiedOwner
     });
-    this.address_service_fetch(requestUrl, fetchParams, (data) => {
+    this.xhr_address_service_fetch(requestUrl, { zip_code: owner.zipCode, state: value }, (data) => {
       if (data) {
         let cities = data.cities ? data.cities.map(city => ({ value: city, name: city })) : [];
         cities.unshift({'value': '', 'name': ''});
@@ -181,7 +187,6 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
         // TODO: silent failure curently. Indicate failure to user
         APMService.getInstance().endTransaction();
       }
-
     });
   }
 
@@ -197,8 +202,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     APMService.getInstance().startTransaction('OwnerEditor:FindAddress');
     const requestUrl = url('api/find_address');
     const { owner } = this.state;
-    const fetchParams = this.buildParams({ zip_code: owner.zipCode, state: owner.state, city: owner.city, address: value });
-    this.address_service_fetch(requestUrl, fetchParams, (data) => {
+    this.xhr_address_service_fetch(requestUrl, { zip_code: owner.zipCode, state: owner.state, city: owner.city, address: value }, (data) => {
       if (data) {
         onSuccess(data.addresses);
         APMService.getInstance().endTransaction();

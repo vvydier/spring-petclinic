@@ -6,21 +6,17 @@ import { APMService } from '../main';
 export const xhr_request = (path: string, onSuccess: (status: number, response: any) => any) => {
   const requestUrl = url(path);
   const xhr = new XMLHttpRequest();
-  APMService.getInstance().startSpan('GET ' + requestUrl, 'http');
   xhr.open('GET', requestUrl, true);
   xhr.onload = function(e) {
     if (xhr.status < 400) {
-        APMService.getInstance().endSpan();
         onSuccess(xhr.status, JSON.parse(xhr.responseText));
     } else {
       APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
-      APMService.getInstance().endSpan();
       onSuccess(xhr.status, {});
     }
   };
   xhr.onerror = function(e) {
      APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
-     APMService.getInstance().endSpan();
      onSuccess(xhr.status, {});
   };
   xhr.send(null);
@@ -28,17 +24,14 @@ export const xhr_request = (path: string, onSuccess: (status: number, response: 
 
 export const request = (path: string, onSuccess: (status: number, response: any) => any) => {
   const requestUrl = url(path);
-  APMService.getInstance().startSpan('GET ' + requestUrl, 'http');
   return fetch(requestUrl)
     .then(response =>  {
         if (response.status < 400) {
             response.json().then(result => {
-                APMService.getInstance().endSpan();
                 onSuccess(response.status, result);
             });
         } else {
           APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${response.status} ${response.statusText}`);
-          APMService.getInstance().endSpan();
           onSuccess(response.status, {});
         }
     });
@@ -69,8 +62,8 @@ export const request_promise = (path: string, method = 'GET', data?: any): any =
 
 // as fetch isn't instrumenented yet by elastic APM
 export const xhr_request_promise = (path: string, method = 'GET', data?: any): any => {
-  const requestUrl = url(path);
   return new Promise(function (resolve, reject) {
+    const requestUrl = url(path);
     const xhr = new XMLHttpRequest();
     xhr.open(method, requestUrl, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -87,9 +80,11 @@ export const xhr_request_promise = (path: string, method = 'GET', data?: any): a
       APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
       reject({});
     };
+    let payload = null;
     if (data) {
-      xhr.send(JSON.stringify(data));
+      payload = JSON.stringify(data);
     }
+    xhr.send(payload);
   });
 };
 
@@ -110,21 +105,17 @@ export const submitForm = (method: IHttpMethod, path: string, data: any, onSucce
     },
     body: JSON.stringify(data)
   };
-  APMService.getInstance().startSpan(method + requestUrl, 'http');
   return fetch(requestUrl, fetchParams)
     .then(response =>  {
         if (response.status >= 400) {
             APMService.getInstance().captureError(`Failed ${method} to ${requestUrl} - ${response.status} ${response.statusText}`);
-            APMService.getInstance().endSpan();
             onSuccess(response.status, `Failed ${method} to ${requestUrl} - ${response.status} ${response.statusText}`);
         } else {
           if (response.status !== 204)  {
             response.json().then(result => {
-                APMService.getInstance().endSpan();
                 onSuccess(response.status, result);
             });
           } else {
-            APMService.getInstance().endSpan();
             onSuccess(response.status, {});
           }
         }
@@ -134,21 +125,17 @@ export const submitForm = (method: IHttpMethod, path: string, data: any, onSucce
 export const xhr_submitForm = (method: IHttpMethod, path: string, data: any, onSuccess: (status: number, response: any) => void) => {
   const requestUrl = url(path);
   const xhr = new XMLHttpRequest();
-  APMService.getInstance().startSpan(method + requestUrl, 'http');
   xhr.open(method, requestUrl, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('Accept', 'application/json');
   xhr.onload = function(e) {
     if (xhr.status >= 400) {
         APMService.getInstance().captureError(`Failed ${method} to ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
-        APMService.getInstance().endSpan();
         onSuccess(xhr.status, JSON.parse(xhr.responseText));
     } else {
       if (xhr.status !== 204)  {
-        APMService.getInstance().endSpan();
         onSuccess(xhr.status, JSON.parse(xhr.responseText));
       } else {
-        APMService.getInstance().endSpan();
         onSuccess(xhr.status, {});
       }
     }
@@ -156,7 +143,6 @@ export const xhr_submitForm = (method: IHttpMethod, path: string, data: any, onS
 
   xhr.onerror = function(e) {
      APMService.getInstance().captureError(`Failed GET on ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
-     APMService.getInstance().endSpan();
      onSuccess(xhr.status, {});
   };
   xhr.send(JSON.stringify(data));

@@ -1,5 +1,6 @@
 import * as React from 'react';
-
+import { xhr_request_promise, url } from '../util/index';
+import { APMService } from '../main';
 interface IErrorPageState {
   error?: {
     status: string;
@@ -13,10 +14,18 @@ export default class ErrorPage extends React.Component<void, IErrorPageState> {
     this.state = {};
   }
 
+  componentWillMount() {
+    APMService.getInstance().startTransaction('ErrorPage');
+  }
+
   componentDidMount() {
-    fetch('api/error')
-      .then(response => response.json())
-      .then(error => this.setState({error}));
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url('api/error'), true);
+    xhr.onload = function(e) {
+      APMService.getInstance().endTransaction();
+      this.setState({'error': JSON.parse(xhr.responseText)});
+    }.bind(this);
+    xhr.send(null);
   }
 
   render() {

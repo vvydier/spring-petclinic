@@ -21,31 +21,43 @@ export class APMService {
   }
 
   private setup_apm() {
-      fetch(url('config')).then(response => response.json()).then(config =>  {
-        this.apm = initApm({
-           serviceName: config.apm_client_service_name,
-           serverUrl: config.apm_server_js,
-           serviceVersion: config.apm_service_version,
-           transactionThrottleLimit: 1000,
-           errorThrottleLimit: 1000,
-           distributedTracingOrigins: config.distributedTracingOrigins.split(','),
-           logLevel: 'debug'
-        });
-        this.apm.setInitialPageLoadName(window.location.pathname !== '' ? window.location.pathname : 'homepage');
-        // remove apm-server RUM events
-        this.apm.addFilter(function (payload) {
-          if (payload.transactions) {
-            payload.transactions.filter(function (tr) {
-              return tr.spans.some(function (span) {
-                return (span.context && span.context.http && span.context.http.url && span.context.http.url.includes('v1/rum/transactions'));
-              });
+      const requestUrl = url('config');
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', requestUrl, true);
+      xhr.onload = function(e) {
+        if (xhr.status === 200) {
+            const config = JSON.parse(xhr.responseText);
+            this.apm = initApm({
+               serviceName: config.apm_client_service_name,
+               serverUrl: config.apm_server_js,
+               serviceVersion: config.apm_service_version,
+               transactionThrottleLimit: 1000,
+               errorThrottleLimit: 1000,
+               distributedTracingOrigins: config.distributedTracingOrigins.split(',')
             });
-          };
-          // Make sure to return the payload
-          return payload;
-        });
-        APMService.instance.ready = true;
-      });
+            this.apm.setInitialPageLoadName(window.location.pathname !== '' ? window.location.pathname : 'homepage');
+            this.apm.addFilter(function (payload) {
+              if (payload.transactions) {
+                payload.transactions.filter(function (tr) {
+                  return tr.spans.some(function (span) {
+                    return (span.context && span.context.http && span.context.http.url && (span.context.http.url.includes('rum/transactions')
+                    || span.context.http.url.includes('rum/events')));
+                  });
+                });
+              };
+              return payload;
+            });
+            APMService.instance.ready = true;
+        } else {
+          console.log('Failed to Initialize APM');
+          console.log(`Failed GET on ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
+        }
+      }.bind(this);
+      xhr.onerror = function(e) {
+         console.log('Failed to Initialize APM');
+         console.log(`Failed GET on ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
+      };
+      xhr.send(null);
   }
 
   static getInstance() {
