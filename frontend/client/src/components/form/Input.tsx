@@ -33,7 +33,7 @@ export default ({object, error, name, constraint = NoConstraint, label, onChange
   };
 
   const value = object[name];
-  const fieldError = error && error.fieldErrors[name];
+  const fieldError = error && error.fieldErrors && error.fieldErrors[name];
   const valid = !fieldError && value !== null && value !== undefined;
 
   const cssGroup = `form-group ${fieldError ? 'has-error' : ''}`;
@@ -41,11 +41,9 @@ export default ({object, error, name, constraint = NoConstraint, label, onChange
   return (
     <div className={cssGroup}>
       <label className='col-sm-2 control-label'>{label}</label>
-
       <div className='col-sm-10'>
         <input type='text' name={name} className='form-control' defaultValue={value} onChange={handleOnChange} onBlur={handleOnBlur} />
          <FieldFeedbackPanel valid={valid} fieldError={fieldError} />
-
       </div>
     </div>
   );

@@ -27,7 +27,9 @@ export class APMService {
            serverUrl: config.apm_server_js,
            serviceVersion: config.apm_service_version,
            transactionThrottleLimit: 1000,
-           errorThrottleLimit: 1000
+           errorThrottleLimit: 1000,
+           distributedTracingOrigins: config.distributedTracingOrigins.split(','),
+           logLevel: 'debug'
         });
         this.apm.setInitialPageLoadName(window.location.pathname !== '' ? window.location.pathname : 'homepage');
         // remove apm-server RUM events

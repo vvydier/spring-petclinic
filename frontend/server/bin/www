@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const settings = require('../config')
 var apm = require('elastic-apm-node').start({
-  serviceName: settings.apm_service_name+'-node',
+  serviceName: settings.apm_service_name,
   serviceVersion: settings.apm_service_version,
   serverUrl: settings.apm_server,
   captureBody: "all",
@@ -9,8 +9,8 @@ var apm = require('elastic-apm-node').start({
   captureErrorLogStackTraces: "always",
   sourceLinesErrorAppFrames: 10,
   sourceLinesErrorLibraryFrames: 10,
-  sourceLinesSpanAppFrames: 5,
-  sourceLinesSpanLibraryFrames: 5,
+  sourceLinesSpanAppFrames: 10,
+  sourceLinesSpanLibraryFrames: 10,
   transactionMaxSpans: -1
 })
 /**

@@ -12,7 +12,7 @@ export default ({object, error, size, name, label, disabled, options, onChange }
 
 
   const selectedValue = object[name] || '';
-  const fieldError = error && error.fieldErrors[name];
+  const fieldError = error && error.fieldErrors && error.fieldErrors[name];
   const valid = !fieldError && selectedValue !== '';
 
   const cssGroup = `form-group ${fieldError ? 'has-error' : ''}`;

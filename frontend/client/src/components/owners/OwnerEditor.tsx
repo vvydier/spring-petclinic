@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { IRouter, Link } from 'react-router';
-import { url, submitForm, request_promise } from '../../util/index';
+import { url, submitForm, request_promise, xhr_submitForm, xhr_request_promise } from '../../util/index';
 import Input from '../form/Input';
 import SelectInput from '../form/SelectInput';
 import AutocompleteInput from '../form/AutocompleteInput';
@@ -57,8 +57,8 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     APMService.getInstance().startSpan('POST api/find_state', 'http');
     return Promise.all(
       [
-        request_promise('api/find_state', 'POST', { zip_code: this.state.owner.zipCode }),
-        request_promise('api/find_city', 'POST', { zip_code: this.state.owner.zipCode, state: this.state.owner.state })
+        xhr_request_promise('api/find_state', 'POST', { zip_code: this.state.owner.zipCode }),
+        xhr_request_promise('api/find_city', 'POST', { zip_code: this.state.owner.zipCode, state: this.state.owner.state })
       ]
     ).then(response => {
       // TODO: Currently fails silently - maybe warn if error vs no data
@@ -82,7 +82,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     APMService.getInstance().startTransaction( owner.isNew ? 'CreateOwner' : 'UpdateOwner');
     event.preventDefault();
 
-    submitForm(owner.isNew ? 'POST' : 'PUT', url, owner, (status, response) => {
+    xhr_submitForm(owner.isNew ? 'POST' : 'PUT', url, owner, (status, response) => {
       if (status === 204 || status === 201) {
         APMService.getInstance().endTransaction();
         const owner_id = owner.isNew ? (response as IOwner).id : owner.id;
@@ -219,7 +219,6 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
 
   render() {
     const { owner, error, states, cities, addresses } = this.state;
-    console.log(owner);
     return (
       <span>
         <h2>{owner.isNew ? 'Add Owner' : 'Update Owner'}</h2>

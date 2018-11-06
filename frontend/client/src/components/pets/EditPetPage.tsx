@@ -1,8 +1,7 @@
 import * as React from 'react';
 
 import { IOwner, IEditablePet, ISelectOption } from '../../types/index';
-import { request } from '../../util/index';
-import { request_promise } from '../../util/index';
+import { request, request_promise } from '../../util/index';
 import { APMService } from '../../main';
 import LoadingPanel from './LoadingPanel';
 import PetEditor from './PetEditor';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { IRouter, Link } from 'react-router';
-import { url, submitForm } from '../../util/index';
+import { url, submitForm, xhr_submitForm } from '../../util/index';
 import { APMService } from '../../main';
 import Input from '../form/Input';
 import DateInput from '../form/DateInput';
@@ -61,6 +61,8 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
         firstName: owner.firstName,
         lastName: owner.lastName,
         city: owner.city,
+        state: owner.state,
+        zipCode: owner.zipCode,
         telephone: owner.telephone,
         address: owner.address,
         pets: null
@@ -75,7 +77,7 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
     const url = editablePet.isNew ? 'api/pets' :  'api/pets/' + editablePet.id;
     APMService.getInstance().startTransaction( editablePet.isNew ? 'CreatePet' : 'UpdatePet');
 
-    submitForm(editablePet.isNew ? 'POST' : 'PUT', url, request, (status, response) => {
+    xhr_submitForm(editablePet.isNew ? 'POST' : 'PUT', url, request, (status, response) => {
       if (status === 204 || status === 201) {
         APMService.getInstance().endTransaction();
         this.context.router.push({
@@ -98,9 +100,7 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
 
   render() {
     const { owner, pettypes } = this.props;
-    console.log(owner);
     const { editablePet, error } = this.state;
-
     const formLabel = editablePet.isNew ? 'Add Pet' : 'Update Pet';
 
     return (

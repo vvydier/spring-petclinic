@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { IOwner, IPet, IPetType, IVisit, IError, IRouterContext } from '../../types/index';
 
-import { url, request, submitForm } from '../../util/index';
+import { url, request, submitForm, xhr_request, xhr_submitForm } from '../../util/index';
 import { NotEmpty } from '../form/Constraints';
 import { APMService } from '../../main';
 import DateInput from '../form/DateInput';
@@ -48,7 +48,7 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
 
     if (params && params.ownerId) {
 
-      request(`api/owners/${params.ownerId}`, (status, owner) =>  {
+      xhr_request(`api/owners/${params.ownerId}`, (status, owner) =>  {
         this.setState( { owner: owner, visit: { id: null, isNew: true, date: null, description: '' } });
         APMService.getInstance().endTransaction();
       });
@@ -74,6 +74,8 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
           owner: {
             address: owner.address,
             city: owner.city,
+            state: owner.state,
+            zipCode: owner.zipCode,
             firstName: owner.firstName,
             lastName: owner.lastName,
             telephone: owner.telephone,
@@ -84,7 +86,7 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
     };
 
     const url = 'api/visits';
-    submitForm('POST', url, request, (status, response) => {
+    xhr_submitForm('POST', url, request, (status, response) => {
       if (status === 201) {
         APMService.getInstance().endTransaction();
         this.context.router.push({

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Router, Link } from 'react-router';
-import { request } from '../../util/index';
+import { request, xhr_request } from '../../util/index';
 import { IVet } from '../../types/index';
 import { APMService } from '../../main';
 interface IVetsPageState {
@@ -16,15 +16,11 @@ export default class VetsPage extends React.Component<void, IVetsPageState> {
   }
   componentWillMount() {
     APMService.getInstance().startTransaction('VetsPage');
-    // if (apm != null) {
-      // let transaction = apm.startTransaction(location.pathname, 'React Route Change');
-      // console.log(transaction);
-    // }
   }
 
   componentDidMount() {
-    request('api/vets', (status, vets) =>  {
-      console.log('vets', vets);
+    xhr_request('api/vets', (status, vets) =>  {
+      console.log(vets);
       this.setState({ vets });
       APMService.getInstance().endTransaction();
     });

@@ -3,7 +3,7 @@ import OwnerEditor from './OwnerEditor';
 import { APMService } from '../../main';
 import { IOwner } from '../../types/index';
 import { url } from '../../util/index';
-import { request } from '../../util/index';
+import { request, xhr_request } from '../../util/index';
 
 interface IEditOwnerPageProps {
   params?: { ownerId?: string };
@@ -23,7 +23,7 @@ export default class EditOwnerPage extends React.Component<IEditOwnerPageProps, 
     const { params } = this.props;
 
     if (params && params.ownerId) {
-      request(`api/owners/${params.ownerId}`, (status, owner) =>  {
+      xhr_request(`api/owners/${params.ownerId}`, (status, owner) =>  {
         APMService.getInstance().endTransaction();
         this.setState({ owner });
       });

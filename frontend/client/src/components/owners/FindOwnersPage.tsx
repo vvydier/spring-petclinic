@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { IRouter, Link } from 'react-router';
 import { IOwner, IRouterContext } from '../../types/index';
-import { request } from '../../util/index';
+import { request, xhr_request } from '../../util/index';
 import { APMService } from '../../main';
 import OwnersTable from './OwnersTable';
 
@@ -88,7 +88,7 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
     const query = encodeURIComponent(filter);
 
     const requestUrl = filter && query !== '*' ? 'api/owners/*/lastname/' + query : 'api/owners';
-    request(requestUrl, (status, owners) =>  {
+    xhr_request(requestUrl, (status, owners) =>  {
       this.setState({ owners });
       APMService.getInstance().endTransaction();
     });
