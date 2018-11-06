@@ -1,6 +1,6 @@
 #!/bin/bash -e
 echo "Loading source maps"
-chmod 0666 /sourcemaps/*.map
+chmod 0666 /source_maps/*.map
 
 #wait for apm-server to come alive
 until  $(curl -s -o /tmp/apm_health_check.out --head --fail "${ELASTIC_APM_SERVER_URL}/healthcheck"); do
@@ -9,20 +9,24 @@ until  $(curl -s -o /tmp/apm_health_check.out --head --fail "${ELASTIC_APM_SERVE
 done
 #wait for es to be available as source maps will go there from the apm-server
 shopt -s nocasematch
-export CURL_FLAGS=""
 if [[ "${INSECURE_SSL}" == "true" ]]; then
-    CURL_FLAGS="--insecure"
+    until curl -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" -s "${ELASTICSEARCH_URL}/_cat/health" "--insecure" -o /dev/null; do
+        echo "Waiting for Elasticsearch..."
+        sleep 1
+    done
+else
+    until curl -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" -s "${ELASTICSEARCH_URL}/_cat/health" -o /dev/null; do
+        echo "Waiting for Elasticsearch..."
+        sleep 1
+    done
 fi
 shopt -u nocasematch
 
 # Wait for Elasticsearch to start up before doing anything.
-until curl -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" -s "${ELASTICSEARCH_URL}/_cat/health" "${CURL_FLAGS}" -o /dev/null; do
-    echo "Waiting for Elasticsearch..."
-    sleep 1
-done
+
 
 echo "Ready to load sourcemaps"
-for source_map in /sourcemaps/*.map; do
+for source_map in /source_maps/*.map; do
 
     filename=$(basename $source_map)
     filename="${filename%.*}"
@@ -50,3 +54,4 @@ for source_map in /sourcemaps/*.map; do
     fi
 done
 exec "$@"
+
