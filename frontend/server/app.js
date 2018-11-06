@@ -56,7 +56,7 @@ app.use('/api/find_state', proxy(settings.address_server, {
           let err = getError(proxyRes.statusCode, proxyResData);
           apm.captureError(err, {
             request: userReq,
-            response: userRes
+            response: proxyRes
           });
       }
       return proxyResData
@@ -74,7 +74,7 @@ app.use('/api/find_city', proxy(settings.address_server, {
           let err = getError(proxyRes.statusCode, proxyResData);
           apm.captureError(err, {
             request: userReq,
-            response: userRes
+            response: proxyRes
           });
       }
       return proxyResData
@@ -92,7 +92,7 @@ app.use('/api/find_address', proxy(settings.address_server, {
           let err = getError(proxyRes.statusCode, proxyResData);
           apm.captureError(err, {
             request: userReq,
-            response: userRes
+            response: proxyRes
           });
       }
       return proxyResData
@@ -111,7 +111,8 @@ app.use('/api', proxy(settings.api_server, {
           let err = getError(proxyRes.statusCode, proxyResData);
           apm.captureError(err, {
             request: userReq,
-            response: userRes
+            response: proxyRes,
+            custom: JSON.parse(proxyResData.toString('utf8'))
           });
       }
       return proxyResData

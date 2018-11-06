@@ -110,6 +110,7 @@ export class APMService {
 
   captureError(message) {
     if (APMService.instance.open) {
+      console.log('Capturing Error');
       APMService.instance.apm.captureError(new Error(message));
     }
   }
