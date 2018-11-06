@@ -19,7 +19,7 @@
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.6",
     "elastic-apm-js-base": "git+https://github.com/elastic/apm-agent-js-base.git",
-    "elastic-apm-js-core": "git://github.com/elastic/apm-agent-js-core.git#149ebaabd4136515ea04aff51982375516868184",
+    "elastic-apm-js-core": "git+https://github.com/elastic/apm-agent-js-core.git",
     "moment": "^2.22.2",
     "react": "^15.5.8",
     "react-autosuggest": "^9.4.2",
