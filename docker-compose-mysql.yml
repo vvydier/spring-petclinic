@@ -12,7 +12,7 @@ services:
       - "./mysql-docker.cnf:/etc/mysql/conf.d/docker.cnf:ro"
 
 
-
-
+#FOR LOCAL DEVELOPMENT ONLY
+#POPULATE VIA
 #mysql -h 127.0.0.1 --port=3306 -u root --password=petclinic < ./src/main/resources/db/mysql/initDB.sql
 #mysql -h 127.0.0.1 --port=3306 -u root --password=petclinic petclinic < ./src/main/resources/db/mysql/populateDB.sql
