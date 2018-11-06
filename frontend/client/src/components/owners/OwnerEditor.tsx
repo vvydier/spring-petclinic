@@ -25,6 +25,7 @@ interface IOwnerEditorState {
 export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwnerEditorState> {
 
   context: IRouterContext;
+  initial_render: boolean;
 
   static contextTypes = {
     router: React.PropTypes.object.isRequired
@@ -32,6 +33,8 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
 
   constructor(props) {
     super(props);
+    APMService.getInstance().startTransaction('OwnerEditor');
+    this.initial_render = true;
     this.onInputChange = this.onInputChange.bind(this);
     this.onZipChange = this.onZipChange.bind(this);
     this.address_service_fetch = this.address_service_fetch.bind(this);
@@ -49,30 +52,44 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     };
   }
 
-  componentWillMount() {
-    APMService.getInstance().startTransaction('OwnerEditor');
-  }
-
   componentDidMount() {
-    return Promise.all(
-      [
-        xhr_request_promise('api/find_state', 'POST', { zip_code: this.state.owner.zipCode }),
-        xhr_request_promise('api/find_city', 'POST', { zip_code: this.state.owner.zipCode, state: this.state.owner.state })
-      ]
-    ).then(response => {
-      // TODO: Currently fails silently - maybe warn if error vs no data
-      let states = response[0] && response[0].states ? response[0].states.map(state => ({ value: state, name: state })) : [];
-      states.unshift({'value': '', 'name': ''});
-      let cities = response[1] && response[1].cities ? response[1].cities.map(state => ({ value: state, name: state })) : [];
-      cities.unshift({'value': '', 'name': ''});
-      APMService.getInstance().endTransaction();
-      this.setState({
-        states: states,
-        cities: cities
+    if (this.state.owner.zipCode && this.state.owner.zipCode !== '') {
+      return Promise.all(
+        [
+          xhr_request_promise('api/find_state', 'POST', { zip_code: this.state.owner.zipCode }),
+          xhr_request_promise('api/find_city', 'POST', { zip_code: this.state.owner.zipCode, state: this.state.owner.state })
+        ]
+      ).then(response => {
+        // TODO: Currently fails silently - maybe warn if error vs no data
+        APMService.getInstance().startSpan('Page Render', 'react');
+        let states = response[0] && response[0].states ? response[0].states.map(state => ({ value: state, name: state })) : [];
+        states.unshift({'value': '', 'name': ''});
+        let cities = response[1] && response[1].cities ? response[1].cities.map(state => ({ value: state, name: state })) : [];
+        cities.unshift({'value': '', 'name': ''});
+        this.setState({
+          states: states,
+          cities: cities
+        });
       });
+    } else {
+      APMService.getInstance().startSpan('Page Render', 'react');
+      this.setState({
+        states: [{'value': '', 'name': ''}],
+        cities: [{'value': '', 'name': ''}]
+      });
+    }
 
-    });
   }
+
+
+  componentDidUpdate() {
+    if (this.initial_render) {
+      APMService.getInstance().endSpan();
+      APMService.getInstance().endTransaction();
+    }
+    this.initial_render = false;
+  }
+
 
   onSubmit(event) {
     const { owner } = this.state;

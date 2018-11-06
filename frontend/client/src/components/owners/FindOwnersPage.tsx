@@ -22,13 +22,18 @@ const getFilterFromLocation = (location) => {
 
 export default class FindOwnersPage extends React.Component<IFindOwnersPageProps, IFindOwnersPageState> {
   context: IRouterContext;
+  initial_render: boolean;
 
   static contextTypes = {
     router: React.PropTypes.object.isRequired
   };
 
+
+
   constructor(props) {
     super(props);
+    APMService.getInstance().startTransaction('FindOwnersPage');
+    this.initial_render = true;
     this.onFilterChange = this.onFilterChange.bind(this);
     this.submitSearchForm = this.submitSearchForm.bind(this);
 
@@ -37,8 +42,12 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
     };
   }
 
-  componentWillMount() {
-    APMService.getInstance().startTransaction('FindOwnersPage');
+  componentDidUpdate() {
+    if (this.initial_render) {
+      APMService.getInstance().endSpan();
+      APMService.getInstance().endTransaction();
+    }
+    this.initial_render = false;
   }
 
 
@@ -89,8 +98,8 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
 
     const requestUrl = filter && query !== '*' ? 'api/owners/*/lastname/' + query : 'api/owners';
     xhr_request(requestUrl, (status, owners) =>  {
+      APMService.getInstance().startSpan('Page Render', 'react');
       this.setState({ owners });
-      APMService.getInstance().endTransaction();
     });
   }
 

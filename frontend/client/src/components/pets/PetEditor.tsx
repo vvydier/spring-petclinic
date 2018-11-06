@@ -28,13 +28,6 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
     router: React.PropTypes.object.isRequired
   };
 
-  componentWillMount() {
-    APMService.getInstance().startTransaction('PetEditor');
-  }
-
-  componentDidMount() {
-    APMService.getInstance().endTransaction();
-  }
 
   constructor(props) {
     super(props);

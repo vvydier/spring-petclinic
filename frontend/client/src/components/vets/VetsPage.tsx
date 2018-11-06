@@ -9,21 +9,29 @@ interface IVetsPageState {
 }
 
 export default class VetsPage extends React.Component<void, IVetsPageState> {
+
+  initial_render: boolean;
+
   constructor() {
     super();
-
-    this.state = { vets: [] };
-  }
-  componentWillMount() {
+    this.initial_render = true;
     APMService.getInstance().startTransaction('VetsPage');
+    this.state = { vets: [] };
   }
 
   componentDidMount() {
     xhr_request('api/vets', (status, vets) =>  {
-      console.log(vets);
+      APMService.getInstance().startSpan('Page Render', 'react');
       this.setState({ vets });
-      APMService.getInstance().endTransaction();
     });
+  }
+
+  componentDidUpdate() {
+    if (this.initial_render) {
+      APMService.getInstance().endSpan();
+      APMService.getInstance().endTransaction();
+    }
+    this.initial_render = false;
   }
 
   render() {

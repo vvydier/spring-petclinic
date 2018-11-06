@@ -23,21 +23,33 @@ interface IEditPetPageState {
 
 export default class EditPetPage extends React.Component<IEditPetPageProps, IEditPetPageState> {
 
-  componentWillMount() {
+  initial_render: boolean;
+
+  constructor() {
+    super();
+    this.initial_render = true;
     APMService.getInstance().startTransaction('EditPetPage');
   }
 
   componentDidMount() {
-
     const { params } = this.props;
     const loadPetPromise = xhr_request_promise(`api/pets/${params.petId}`);
     createPetEditorModel(this.props.params.ownerId, loadPetPromise)
       .then(model => {
-            APMService.getInstance().endTransaction();
+            APMService.getInstance().startSpan('Page Render', 'react');
             this.setState(model);
           }
       );
   }
+
+  componentDidUpdate() {
+    if (this.initial_render) {
+      APMService.getInstance().endSpan();
+      APMService.getInstance().endTransaction();
+    }
+    this.initial_render = false;
+  }
+
 
   render() {
     if (!this.state) {

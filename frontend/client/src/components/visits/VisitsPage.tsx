@@ -25,34 +25,37 @@ interface IVisitsPageState {
 
 export default class VisitsPage extends React.Component<IVisitsPageProps, IVisitsPageState> {
 
+ initial_render: boolean;
  context: IRouterContext;
 
   static contextTypes = {
     router: React.PropTypes.object.isRequired
   };
 
-
   constructor(props) {
     super(props);
-
+    this.initial_render = true;
+    APMService.getInstance().startTransaction('VisitsPage');
     this.onInputChange = this.onInputChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentWillMount() {
-    APMService.getInstance().startTransaction('VisitsPage');
-  }
-
   componentDidMount() {
     const { params } = this.props;
-
     if (params && params.ownerId) {
-
       xhr_request(`api/owners/${params.ownerId}`, (status, owner) =>  {
+        APMService.getInstance().startSpan('Page Render', 'react');
         this.setState( { owner: owner, visit: { id: null, isNew: true, date: null, description: '' } });
-        APMService.getInstance().endTransaction();
       });
     }
+  }
+
+  componentDidUpdate() {
+    if (this.initial_render) {
+      APMService.getInstance().endSpan();
+      APMService.getInstance().endTransaction();
+    }
+    this.initial_render = false;
   }
 
   onSubmit(event) {

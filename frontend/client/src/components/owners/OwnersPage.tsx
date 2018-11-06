@@ -17,14 +17,13 @@ interface IOwnerPageState {
 
 export default class OwnersPage extends React.Component<IOwnersPageProps, IOwnerPageState> {
 
+  initial_render: boolean;
+
   constructor() {
     super();
-
-    this.state = {};
-  }
-
-  componentWillMount() {
+    this.initial_render = true;
     APMService.getInstance().startTransaction('OwnersPage');
+    this.state = {};
   }
 
   componentDidMount() {
@@ -32,12 +31,18 @@ export default class OwnersPage extends React.Component<IOwnersPageProps, IOwner
 
     if (params && params.ownerId) {
       xhr_request(`api/owners/${params.ownerId}`, (status, owner) =>  {
+        APMService.getInstance().startSpan('Page Render', 'react');
         this.setState({ owner });
-        APMService.getInstance().endTransaction();
       });
-    } else {
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.initial_render) {
+      APMService.getInstance().endSpan();
       APMService.getInstance().endTransaction();
     }
+    this.initial_render = false;
   }
 
   render() {
