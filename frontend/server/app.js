@@ -25,11 +25,41 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index)
 app.use('/config', config)
 
+function getError(status, proxyResData) {
+  if (proxyResData) {
+    let data = JSON.parse(proxyResData.toString('utf8'));
+    let msg = data;
+    if (data.exMessage) {
+      msg = data.exMessage;
+    } else if (data.className) {
+      msg = data.className;
+    } else if (data.message) {
+      msg = data.message;
+    }
+    let err = new Error(msg);
+    err.name = msg;
+    return err;
+  }
+  let err = Error('Unknown - '+ status);
+  err.name = 'Unknown - '+ status;
+  return err;
+}
+
 app.use('/api/find_state', proxy(settings.address_server, {
     preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
       apm.setTransactionName('/api/find_state')
       return '/api/find_state'
+    },
+    userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
+      if (proxyRes.statusCode >= 400) {
+          let err = getError(proxyRes.statusCode, proxyResData);
+          apm.captureError(err, {
+            request: userReq,
+            response: userRes
+          });
+      }
+      return proxyResData
     }
 }))
 
@@ -38,6 +68,16 @@ app.use('/api/find_city', proxy(settings.address_server, {
     proxyReqPathResolver: function (req) {
       apm.setTransactionName('/api/find_city')
       return '/api/find_city'
+    },
+    userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
+      if (proxyRes.statusCode >= 400) {
+          let err = getError(proxyRes.statusCode, proxyResData);
+          apm.captureError(err, {
+            request: userReq,
+            response: userRes
+          });
+      }
+      return proxyResData
     }
 }))
 
@@ -46,6 +86,16 @@ app.use('/api/find_address', proxy(settings.address_server, {
     proxyReqPathResolver: function (req) {
       apm.setTransactionName('/api/find_address')
       return '/api/find_address'
+    },
+    userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
+      if (proxyRes.statusCode >= 400) {
+          let err = getError(proxyRes.statusCode, proxyResData);
+          apm.captureError(err, {
+            request: userReq,
+            response: userRes
+          });
+      }
+      return proxyResData
     }
 }))
 
@@ -55,6 +105,16 @@ app.use('/api', proxy(settings.api_server, {
     proxyReqPathResolver: function (req) {
       apm.setTransactionName('/api/'+req.url.split('/').filter(c => c != '').slice(0,1)[0])
       return settings.api_prefix+req.url
+    },
+    userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
+      if (proxyRes.statusCode >= 400) {
+          let err = getError(proxyRes.statusCode, proxyResData);
+          apm.captureError(err, {
+            request: userReq,
+            response: userRes
+          });
+      }
+      return proxyResData
     }
 }))
 
