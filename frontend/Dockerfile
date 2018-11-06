@@ -15,7 +15,9 @@ ENV PATH /usr/src/petclinic-frontend/server/node_modules/.bin:$PATH
 RUN npm install
 RUN cp /usr/src/petclinic-frontend/client/dist/index.* /usr/src/petclinic-frontend/server/public/
 RUN cp -R /usr/src/petclinic-frontend/client/dist/public/ /usr/src/petclinic-frontend/server/public/
-RUN /usr/src/spring-petclinic/frontend/client/dist/*.js.map /source_maps/
+
+RUN mkdir source_maps
+RUN cp /usr/src/spring-petclinic/frontend/client/dist/index.js.map /source_maps/index.js.map
 
 COPY entrypoint.sh /etc/entrypoint.sh
 

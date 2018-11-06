@@ -22,7 +22,6 @@ RUN curl -L https://github.com/$JAVA_AGENT_REPO/archive/$JAVA_AGENT_BRANCH.tar.g
 
 RUN mvn -q -B package -DskipTests
 
-
 RUN export JAVA_AGENT_BUILT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec) \
     && cp -v /usr/src/java-agent-code/elastic-apm-agent/target/elastic-apm-agent-${JAVA_AGENT_BUILT_VERSION}.jar /usr/src/java-app/elastic-apm-agent.jar
 
@@ -41,7 +40,7 @@ CMD java -javaagent:/app/elastic-apm-agent.jar\
                                         -Dspring.messages.basename=messages/messages\
                                         -Dlogging.level.org.springframework=${LOG_LEVEL:-INFO}\
                                         -Dsecurity.ignored=${SECURITY_IGNORED:-/**}\
-                                        -Dspring.datasource.initialize=true\
+                                        -Dspring.datasource.initialize=${INITIALIZE_DB:-false}\
                                         -Dbasic.authentication.enabled=${AUTHENTICATION_ENABLED:-false}\
                                         -Dserver.address=${SERVER_ADDRESS:-0.0.0.0}\
                                         -Dspring.datasource.url=${DATABASE_URL:-jdbc:hsqldb:mem:petclinic}\
@@ -53,7 +52,7 @@ CMD java -javaagent:/app/elastic-apm-agent.jar\
                                         -Dspring.jpa.hibernate.ddl-auto=${DDL_AUTO:-none}\
                                         -Dspring.datasource.schema=${DATASOURCE_SCHEMA:-classpath*:db/hsqldb/initDB.sql}\
                                         -Dspring.datasource.data=${DATASOURCE_DATA:-classpath*:db/hsqldb/populateDB.sql}\
-                                        -Delastic.apm.service_name=${ELASTIC_APM_SERVICE_NAME:-petclinic-spring}\
+                                        -Delastic.apm.service_name=${ELASTIC_APM_SERVICE_NAME:-spring-petclinic}\
                                         -Delastic.apm.service_version=${ELASTIC_APM_SERVICE_VERSION:-1.0.0}\
                                         -Delastic.apm.span_frames_min_duration=${ELASTIC_APM_SPAN_FRAMES_MIN_DURATION:-5ms}\
                                         -Delastic.apm.capture_body=${ELASTIC_APM_CAPTURE_BODY:-off}\
