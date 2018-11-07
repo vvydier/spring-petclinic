@@ -216,18 +216,18 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   }
 
   onAddressFetch(value: string, onSuccess: (data: any) => void ) {
-    APMService.getInstance().startTransaction('OwnerEditor:FindAddress');
-    const requestUrl = url('api/find_address');
     const { owner } = this.state;
-    this.xhr_address_service_fetch(requestUrl, { zip_code: owner.zipCode, state: owner.state, city: owner.city, address: value }, (data) => {
-      if (data) {
-        onSuccess(data.addresses);
+    if (value.length > 3 && /\s/.test(value) && value !== owner.address) {
+      APMService.getInstance().startTransaction('OwnerEditor:FindAddress');
+      const requestUrl = url('api/find_address');
+      this.xhr_address_service_fetch(requestUrl, { zip_code: owner.zipCode, state: owner.state, city: owner.city, address: owner.address }, (data) => {
+        if (data) {
+          onSuccess(data.addresses);
+        }
         APMService.getInstance().endTransaction();
-      } else {
         // TODO: silent failure curently. Indicate failure to user
-        APMService.getInstance().endTransaction();
-      }
-    });
+      });
+    }
   }
 
   onAddressChange(value: string ) {
@@ -241,7 +241,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   render() {
     const { owner, error, states, cities, addresses } = this.state;
     return (
-      <span>
+      <span id='owner_editor'>
         <h2>{owner.isNew ? 'Add Owner' : 'Update Owner'}</h2>
         <form className='form-horizontal' method='POST' action={url(owner.isNew ? 'api/owners' : 'api/owners/' + owner.id)}>
           <div className='form-group has-feedback'>
