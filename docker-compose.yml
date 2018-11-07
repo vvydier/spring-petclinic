@@ -201,7 +201,7 @@ services:
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_URL: http://elasticsearch:9200
       PETCLINIC_INTERNAL_URL: "http://petclinic-client:${CLIENT_SERVER_PORT}"
-      PETCLINIC_EXERNAL_URL: "http://localhost:${CLIENT_SERVER_PORT}"
+      PETCLINIC_EXTERNAL_URL: "http://localhost:${CLIENT_SERVER_PORT}"
       ELASTICSEARCH_PASSWORD: changeme
       ADDRESS_SERVER: "http://address-finder:5000"
     depends_on:
