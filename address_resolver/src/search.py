@@ -69,5 +69,5 @@ class AddressSearch():
         results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc', body=query)
         addresses = [result["_source"]["address"] for result in results["hits"]["hits"]]
         return {
-            "addresses": list(set(address.lower() for address in addresses))
+            "addresses": list(set(address.lower() for address in addresses))[:10]
         }

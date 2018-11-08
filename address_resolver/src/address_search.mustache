@@ -3,31 +3,9 @@
     "bool": {
       "must": [
         {
-          "regexp": {
-            "zip_code": {
-              "value": "{{zip_code}}"
-            }
-          }
-        },
-        {
-          "term": {
-            "state.keyword": {
-              "value": "{{state}}"
-            }
-          }
-        },
-        {
-          "term": {
-            "city.keyword": {
-              "value": "{{city}}"
-            }
-          }
-        },
-        {
           "match": {
             "address": {
               "query": "{{address}}",
-              "operator": "and",
               "zero_terms_query": "all"
             }
           }
@@ -35,6 +13,6 @@
       ]
     }
   },
-  "size":10,
+  "size":20,
   "_source": "address"
 }

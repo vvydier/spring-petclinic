@@ -4,6 +4,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "appmetrics": "^4.0.0",
     "body-parser": "^1.17.2",
     "clone": "^2.1.1",
     "compression": "^1.7.1",
