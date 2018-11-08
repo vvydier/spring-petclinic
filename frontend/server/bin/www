@@ -14,10 +14,6 @@ var apm = require('elastic-apm-node').start({
   transactionMaxSpans: -1
 })
 
-var appmetrics = require('appmetrics');
-var monitoring = appmetrics.monitor();
-
-
 /**
  * Module dependencies.
  */

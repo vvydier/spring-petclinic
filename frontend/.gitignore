@@ -2,3 +2,4 @@
 **/typings
 .DS_Store
 **/dist
+**/.log
