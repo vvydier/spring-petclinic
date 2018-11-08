@@ -1,7 +1,7 @@
 {
   "name": "react-petclinic-server",
   "scripts": {
-    "start": "node --inspect ./bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "body-parser": "^1.17.2",

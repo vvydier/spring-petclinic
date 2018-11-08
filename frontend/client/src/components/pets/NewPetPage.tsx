@@ -44,11 +44,16 @@ export default class NewPetPage extends React.Component<INewPetPageProps, INewPe
   componentDidUpdate() {
     if (this.initial_render) {
       APMService.getInstance().endSpan();
-      APMService.getInstance().endTransaction();
+      APMService.getInstance().endTransaction(true);
     }
     this.initial_render = false;
   }
 
+
+  componentWillUnmount() {
+    APMService.getInstance().endSpan();
+    APMService.getInstance().endTransaction(false);
+  }
 
   componentDidMount() {
     createPetEditorModel(this.props.params.ownerId, Promise.resolve(NEW_PET))

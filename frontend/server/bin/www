@@ -11,7 +11,8 @@ var apm = require('elastic-apm-node').start({
   sourceLinesErrorLibraryFrames: 10,
   sourceLinesSpanAppFrames: 10,
   sourceLinesSpanLibraryFrames: 10,
-  transactionMaxSpans: -1
+  transactionMaxSpans: -1,
+  asyncHooks: false
 })
 
 /**

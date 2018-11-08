@@ -3,6 +3,20 @@
     "bool": {
       "must": [
         {
+            "term": {
+              "state.keyword": {
+                "value": "{{state}}"
+              }
+            }
+        },
+        {
+            "term": {
+              "city.keyword": {
+                "value": "{{city}}"
+              }
+            }
+        },
+        {
           "match": {
             "address": {
               "query": "{{address}}",

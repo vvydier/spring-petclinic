@@ -14,6 +14,7 @@ export class APMService {
   private static instance: APMService;
   private apm: any;
   private current_span: any;
+  private span_open = false;
   private ready = false;
   private open = false;
   private constructor () {
@@ -83,32 +84,36 @@ export class APMService {
         APMService.instance.apm.getCurrentTransaction().end();
       }
       let transaction = APMService.instance.apm.startTransaction(name, 'react');
+      APMService.instance.apm.setTags({'success_load': 'false'});
       console.log(transaction);
       APMService.instance.open = true;
     }
   }
 
-  endTransaction() {
+  endTransaction(completed) {
     if (APMService.instance.open) {
+      APMService.instance.open = false;
+      APMService.instance.apm.setTags({'success_load': completed.toString()});
       console.log('Closing transaction');
       let transaction = APMService.instance.apm.getCurrentTransaction();
       transaction.end();
       console.log('Closed transaction:');
       console.log(transaction);
-      APMService.instance.open = false;
     }
   }
 
   startSpan(name, type) {
     if (APMService.instance.ready && APMService.instance.open) {
       let transaction = APMService.instance.apm.getCurrentTransaction();
+      APMService.instance.span_open = true;
       APMService.instance.current_span = transaction.startSpan(name, type);
     }
   }
 
   endSpan() {
-    if (APMService.instance.open) {
+    if (APMService.instance.open && APMService.instance.span_open) {
       APMService.instance.current_span.end();
+      APMService.instance.span_open = false;
     }
   }
 

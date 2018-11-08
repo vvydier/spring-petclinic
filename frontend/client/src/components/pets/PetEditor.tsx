@@ -72,12 +72,12 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
 
     xhr_submitForm(editablePet.isNew ? 'POST' : 'PUT', url, request, (status, response) => {
       if (status === 204 || status === 201) {
-        APMService.getInstance().endTransaction();
+        APMService.getInstance().endTransaction(true);
         this.context.router.push({
           pathname: '/owners/' + owner.id
         });
       } else {
-        APMService.getInstance().endTransaction();
+        APMService.getInstance().endTransaction(false);
         console.log('ERROR?!...', response);
         this.setState({ error: response });
       }

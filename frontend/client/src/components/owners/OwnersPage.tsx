@@ -40,9 +40,14 @@ export default class OwnersPage extends React.Component<IOwnersPageProps, IOwner
   componentDidUpdate() {
     if (this.initial_render) {
       APMService.getInstance().endSpan();
-      APMService.getInstance().endTransaction();
+      APMService.getInstance().endTransaction(true);
     }
     this.initial_render = false;
+  }
+
+  componentWillUnmount() {
+    APMService.getInstance().endSpan();
+    APMService.getInstance().endTransaction(false);
   }
 
   render() {

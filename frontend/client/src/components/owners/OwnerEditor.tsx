@@ -81,11 +81,16 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
 
   }
 
+  componentWillUnmount() {
+    APMService.getInstance().endSpan();
+    APMService.getInstance().endTransaction(false);
+  }
+
 
   componentDidUpdate() {
     if (this.initial_render) {
       APMService.getInstance().endSpan();
-      APMService.getInstance().endTransaction();
+      APMService.getInstance().endTransaction(true);
     }
     this.initial_render = false;
   }
@@ -99,13 +104,13 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
 
     xhr_submitForm(owner.isNew ? 'POST' : 'PUT', url, owner, (status, response) => {
       if (status === 204 || status === 201) {
-        APMService.getInstance().endTransaction();
+        APMService.getInstance().endTransaction(true);
         const owner_id = owner.isNew ? (response as IOwner).id : owner.id;
         this.context.router.push({
           pathname: '/owners/' + owner_id
         });
       } else {
-        APMService.getInstance().endTransaction();
+        APMService.getInstance().endTransaction(false);
         this.setState({ error: response });
       }
     });
@@ -170,7 +175,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
           let states = data.states ? data.states.map(state => ({ value: state, name: state })) : [];
           const modifiedOwner = Object.assign({}, owner, { [name]: value, ['state']: '', ['city']: '' });
           states.unshift({'value': '', 'name': ''});
-          APMService.getInstance().endTransaction();
+          APMService.getInstance().endTransaction(true);
           this.setState({
             owner: modifiedOwner,
             states: states,
@@ -178,7 +183,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
           });
         } else {
           // TODO: silent failure curently. Indicate failure to user
-          APMService.getInstance().endTransaction();
+          APMService.getInstance().endTransaction(false);
         }
       });
     }
@@ -196,13 +201,13 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
       if (data) {
         let cities = data.cities ? data.cities.map(city => ({ value: city, name: city })) : [];
         cities.unshift({'value': '', 'name': ''});
-        APMService.getInstance().endTransaction();
+        APMService.getInstance().endTransaction(true);
         this.setState({
           cities: cities
         });
       } else {
         // TODO: silent failure curently. Indicate failure to user
-        APMService.getInstance().endTransaction();
+        APMService.getInstance().endTransaction(false);
       }
     });
   }
@@ -223,8 +228,11 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
       this.xhr_address_service_fetch(requestUrl, { zip_code: owner.zipCode, state: owner.state, city: owner.city, address: owner.address }, (data) => {
         if (data) {
           onSuccess(data.addresses);
+          APMService.getInstance().endTransaction(true);
+        } else {
+          APMService.getInstance().endTransaction(false);
         }
-        APMService.getInstance().endTransaction();
+
         // TODO: silent failure curently. Indicate failure to user
       });
     }

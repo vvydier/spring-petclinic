@@ -7,7 +7,7 @@ export default class WelcomePage extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    APMService.getInstance().endTransaction();
+    APMService.getInstance().endTransaction(true);
   }
 
   render() {

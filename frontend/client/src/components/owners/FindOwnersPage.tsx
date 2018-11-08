@@ -45,11 +45,15 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
   componentDidUpdate() {
     if (this.initial_render) {
       APMService.getInstance().endSpan();
-      APMService.getInstance().endTransaction();
+      APMService.getInstance().endTransaction(true);
     }
     this.initial_render = false;
   }
 
+  componentWillUnmount() {
+    APMService.getInstance().endSpan();
+    APMService.getInstance().endTransaction(false);
+  }
 
   componentDidMount() {
     const { filter } = this.state;
@@ -95,11 +99,12 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
    */
   fetchData(filter: string) {
     const query = encodeURIComponent(filter);
-
     const requestUrl = filter && query !== '*' ? 'api/owners/*/lastname/' + query : 'api/owners';
     xhr_request(requestUrl, (status, owners) =>  {
-      APMService.getInstance().startSpan('Page Render', 'react');
-      this.setState({ owners });
+      if (status < 400) {
+        APMService.getInstance().startSpan('Page Render', 'react');
+        this.setState({ owners });
+      }
     });
   }
 

@@ -50,10 +50,15 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
     }
   }
 
+  componentWillUnmount() {
+    APMService.getInstance().endSpan();
+    APMService.getInstance().endTransaction(false);
+  }
+
   componentDidUpdate() {
     if (this.initial_render) {
       APMService.getInstance().endSpan();
-      APMService.getInstance().endTransaction();
+      APMService.getInstance().endTransaction(true);
     }
     this.initial_render = false;
   }
@@ -91,12 +96,12 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
     const url = 'api/visits';
     xhr_submitForm('POST', url, request, (status, response) => {
       if (status === 201) {
-        APMService.getInstance().endTransaction();
+        APMService.getInstance().endTransaction(true);
         this.context.router.push({
           pathname: '/owners/' + owner.id
         });
       } else {
-        APMService.getInstance().endTransaction();
+        APMService.getInstance().endTransaction(false);
         console.log('ERROR?!...', response);
         this.setState({ error: response });
       }
