@@ -39,6 +39,7 @@ import org.springframework.samples.petclinic.rest.JacksonCustomOwnerSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.samples.petclinic.validation.ZipCodeConstraint;
 
 /**
  * Simple JavaBean domain object representing an owner.
@@ -57,6 +58,7 @@ public class Owner extends Person {
     @NotEmpty
     private String address;
 
+    @ZipCodeConstraint
     @Column(name = "zip_code")
     @NotEmpty
     private String zipCode;

@@ -36,6 +36,7 @@ COPY --from=0 /usr/src/java-app/*.jar ./
 CMD java -javaagent:/app/elastic-apm-agent.jar\
                                         -Dspring.profiles.active=${JAVA_PROFILE:-hsqldb,spring-data-jpa}\
                                         -Dserver.port=${SERVER_PORT:-}\
+                                        -Delastic.apm.application_packages=org.springframework.samples.petclinic\
                                         -Dserver.context-path=/petclinic/\
                                         -Dspring.messages.basename=messages/messages\
                                         -Dlogging.level.org.springframework=${LOG_LEVEL:-INFO}\

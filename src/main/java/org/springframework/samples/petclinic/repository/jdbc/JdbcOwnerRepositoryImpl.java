@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
 
+import co.elastic.apm.api.CaptureSpan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
@@ -128,6 +129,7 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
     }
 
     @Override
+    @CaptureSpan(value = "save")
     public void save(Owner owner) throws DataAccessException {
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(owner);
         if (owner.isNew()) {

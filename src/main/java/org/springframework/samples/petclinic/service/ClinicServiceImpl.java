@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
 
+import co.elastic.apm.api.CaptureSpan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
@@ -267,7 +268,8 @@ public class ClinicServiceImpl implements ClinicService {
 	}
 
 	@Override
-	@Transactional
+    @CaptureSpan(value = "saveOwner")
+    @Transactional
 	public void saveOwner(Owner owner) throws DataAccessException {
 		ownerRepository.save(owner);
 		
