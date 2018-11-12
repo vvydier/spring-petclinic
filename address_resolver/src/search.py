@@ -17,6 +17,12 @@ class StateSearch():
         results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc', body=query)
         states = [result["key"] for result in results["aggregations"]["state"]["buckets"]]
         states = list(set(state.lower() for state in states))
+        if len(states) == 0:
+            query = json.loads(self.query_renderer.render_path('all_states.mustache'))
+            results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc',
+                                                       body=query)
+            states = [result["key"] for result in results["aggregations"]["state"]["buckets"]]
+            states = list(set(state.lower() for state in states))
         return {
             "states": states
         }
@@ -39,6 +45,11 @@ class CitySearch():
         query = json.loads(self.query_renderer.render(self))
         results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc', body=query)
         cities = [result["key"] for result in results["aggregations"]["city"]["buckets"]]
+        if len(cities) == 0:
+            query = json.loads(self.query_renderer.render_path('cities_for_state.mustache',self))
+            results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc',
+                                                       body=query)
+            cities = [result["key"] for result in results["aggregations"]["city"]["buckets"]]
         return {
             "cities": list(set(city.lower() for city in cities))
         }
