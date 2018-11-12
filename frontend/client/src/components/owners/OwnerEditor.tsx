@@ -99,6 +99,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   onSubmit(event) {
     const { owner } = this.state;
     const url = owner.isNew ? 'api/owners' : 'api/owners/' + owner.id;
+    this.setState({ error: {'fieldErrors': {}} });
     APMService.getInstance().startTransaction( owner.isNew ? 'CreateOwner' : 'UpdateOwner');
     event.preventDefault();
 
@@ -111,7 +112,11 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
         });
       } else {
         APMService.getInstance().endTransaction(false);
-        this.setState({ error: response });
+        let fieldErrors = response.reduce(function(map, error) {
+            map[error.fieldName] = { 'field': error.fieldName, 'message': error.errorMessage };
+            return map;
+        }, {});
+        this.setState({ error: {'fieldErrors': fieldErrors} });
       }
     });
   }

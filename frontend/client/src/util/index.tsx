@@ -131,7 +131,12 @@ export const xhr_submitForm = (method: IHttpMethod, path: string, data: any, onS
   xhr.onload = function(e) {
     if (xhr.status >= 400) {
         APMService.getInstance().captureError(`Failed ${method} to ${requestUrl} - ${xhr.status} ${xhr.statusText}`);
-        onSuccess(xhr.status, JSON.parse(xhr.responseText));
+        let errors = xhr.getResponseHeader('errors');
+        if (errors) {
+          onSuccess(xhr.status, JSON.parse(errors));
+        } else {
+          onSuccess(xhr.status, JSON.parse(xhr.responseText));
+        }
     } else {
       if (xhr.status !== 204)  {
         onSuccess(xhr.status, JSON.parse(xhr.responseText));
