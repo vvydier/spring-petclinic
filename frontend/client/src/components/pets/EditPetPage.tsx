@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { IOwner, IEditablePet, ISelectOption } from '../../types/index';
 import { request, request_promise, xhr_request_promise } from '../../util/index';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 import LoadingPanel from './LoadingPanel';
 import PetEditor from './PetEditor';
 
@@ -29,6 +29,7 @@ export default class EditPetPage extends React.Component<IEditPetPageProps, IEdi
     super();
     this.initial_render = true;
     APMService.getInstance().startTransaction('EditPetPage');
+    punish();
   }
 
   componentDidMount() {

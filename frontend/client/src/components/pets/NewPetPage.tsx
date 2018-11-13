@@ -3,7 +3,7 @@ import * as React from 'react';
 import { IOwner, IEditablePet, ISelectOption } from '../../types/index';
 
 import { url } from '../../util/index';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 import LoadingPanel from './LoadingPanel';
 import PetEditor from './PetEditor';
 
@@ -38,6 +38,7 @@ export default class NewPetPage extends React.Component<INewPetPageProps, INewPe
     super();
     this.initial_render = true;
     APMService.getInstance().startTransaction('NewPetPage');
+    punish();
   }
 
 

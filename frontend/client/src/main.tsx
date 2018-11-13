@@ -124,10 +124,51 @@ export class APMService {
     }
   }
 
-
-
 }
 
+export const detectIE = () => {
+    let ua = window.navigator.userAgent;
+    let msie = ua.indexOf('MSIE ');
+    if (msie > 0) {
+        // IE 10 or older => return version number
+        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+    }
+    let trident = ua.indexOf('Trident/');
+    if (trident > 0) {
+        // IE 11 => return version number
+        let rv = ua.indexOf('rv:');
+        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+    }
+    let edge = ua.indexOf('Edge/');
+    if (edge > 0) {
+       // Edge (IE 12+) => return version number
+       return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+    }
+    // other browser
+    return -1;
+};
+
+export const pi = (count: number) => {
+    let inside = 0;
+    for (let i = 0; i < count; i++) {
+        let x = (Math.random() * 2) - 1;
+        let y = (Math.random() * 2) - 1;
+        if (((x * x) + (y * y)) < 1) {
+            inside++;
+        }
+    }
+    return 4.0 * (inside / count);
+};
+
+export const punish = () => {
+    if (detectIE() > -1) {
+        console.log('Anyone who uses IE deserves to be punished!');
+        let pain = 50000000 + Math.floor(Math.random() * 25000000);
+        console.log('Amount of Pain: ' + pain);
+        let val = pi(pain);
+        console.log(val);
+    };
+};
 
 /**
 

@@ -5,7 +5,7 @@ import { url, submitForm, request_promise, xhr_submitForm, xhr_request_promise }
 import Input from '../form/Input';
 import SelectInput from '../form/SelectInput';
 import AutocompleteInput from '../form/AutocompleteInput';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 import { Digits, NotEmpty } from '../form/Constraints';
 
 import { IInputChangeHandler, IFieldError, IError, IOwner, IRouterContext, ISelectOption } from '../../types/index';
@@ -34,6 +34,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   constructor(props) {
     super(props);
     APMService.getInstance().startTransaction('OwnerEditor');
+    punish();
     this.initial_render = true;
     this.onInputChange = this.onInputChange.bind(this);
     this.onZipChange = this.onZipChange.bind(this);

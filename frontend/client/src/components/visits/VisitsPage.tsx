@@ -4,7 +4,7 @@ import { IOwner, IPet, IPetType, IVisit, IError, IRouterContext } from '../../ty
 
 import { url, request, submitForm, xhr_request, xhr_submitForm } from '../../util/index';
 import { NotEmpty } from '../form/Constraints';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 import DateInput from '../form/DateInput';
 import Input from '../form/Input';
 import PetDetails from './PetDetails';
@@ -36,6 +36,7 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
     super(props);
     this.initial_render = true;
     APMService.getInstance().startTransaction('VisitsPage');
+    punish();
     this.onInputChange = this.onInputChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }

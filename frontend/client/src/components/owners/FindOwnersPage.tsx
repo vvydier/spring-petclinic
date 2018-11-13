@@ -1,11 +1,9 @@
 import * as React from 'react';
-
 import { IRouter, Link } from 'react-router';
 import { IOwner, IRouterContext } from '../../types/index';
 import { request, xhr_request } from '../../util/index';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 import OwnersTable from './OwnersTable';
-
 
 interface IFindOwnersPageProps {
   location: HistoryModule.Location;
@@ -33,6 +31,7 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
   constructor(props) {
     super(props);
     APMService.getInstance().startTransaction('FindOwnersPage');
+    punish();
     this.initial_render = true;
     this.onFilterChange = this.onFilterChange.bind(this);
     this.submitSearchForm = this.submitSearchForm.bind(this);

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { IRouter, Link } from 'react-router';
 import { url, submitForm, xhr_submitForm } from '../../util/index';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 import Input from '../form/Input';
 import DateInput from '../form/DateInput';
 import SelectInput from '../form/SelectInput';
@@ -31,9 +31,9 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
 
   constructor(props) {
     super(props);
+    punish();
     this.onInputChange = this.onInputChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-
     this.state = { editablePet: Object.assign({}, props.pet ) };
   }
 

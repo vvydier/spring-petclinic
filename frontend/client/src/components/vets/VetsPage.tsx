@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Router, Link } from 'react-router';
 import { request, xhr_request } from '../../util/index';
 import { IVet } from '../../types/index';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 interface IVetsPageState {
   vets: IVet[];
 }
@@ -15,6 +15,7 @@ export default class VetsPage extends React.Component<void, IVetsPageState> {
     super();
     this.initial_render = true;
     APMService.getInstance().startTransaction('VetsPage');
+    punish();
     this.state = { vets: [] };
   }
 

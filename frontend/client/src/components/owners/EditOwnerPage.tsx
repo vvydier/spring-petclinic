@@ -1,6 +1,6 @@
 import * as React from 'react';
 import OwnerEditor from './OwnerEditor';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 import { IOwner } from '../../types/index';
 import { url } from '../../util/index';
 import { request, xhr_request } from '../../util/index';
@@ -15,8 +15,13 @@ interface IEditOwnerPageState {
 
 export default class EditOwnerPage extends React.Component<IEditOwnerPageProps, IEditOwnerPageState> {
 
+  constructor(props) {
+    super(props);
+  }
+
   componentWillMount() {
     APMService.getInstance().startTransaction('EditOwnerPage');
+    punish();
   }
 
   componentDidMount() {

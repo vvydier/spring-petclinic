@@ -5,7 +5,7 @@ import { IOwner } from '../../types/index';
 import { request, xhr_request } from '../../util/index';
 import OwnerInformation from './OwnerInformation';
 import PetsTable from './PetsTable';
-import { APMService } from '../../main';
+import { APMService, punish } from '../../main';
 
 interface IOwnersPageProps {
   params?: { ownerId?: string };
@@ -23,6 +23,7 @@ export default class OwnersPage extends React.Component<IOwnersPageProps, IOwner
     super();
     this.initial_render = true;
     APMService.getInstance().startTransaction('OwnersPage');
+    punish();
     this.state = {};
   }
 
