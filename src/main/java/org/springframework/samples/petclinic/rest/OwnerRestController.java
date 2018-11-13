@@ -106,6 +106,7 @@ public class OwnerRestController {
 		return new ResponseEntity<Owner>(owner, headers, HttpStatus.CREATED);
 	}
 
+    @CaptureSpan(value = "updateOwner")
     @PreAuthorize( "hasRole(@roles.OWNER_ADMIN)" )
 	@RequestMapping(value = "/{ownerId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<Owner> updateOwner(@PathVariable("ownerId") int ownerId, @RequestBody @Valid Owner owner,

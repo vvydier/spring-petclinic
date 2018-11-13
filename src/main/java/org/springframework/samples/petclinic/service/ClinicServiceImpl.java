@@ -220,6 +220,7 @@ public class ClinicServiceImpl implements ClinicService {
 		return petRepository.findPetTypes();
 	}
 
+    @CaptureSpan(value = "findOwnerById")
 	@Override
 	@Transactional(readOnly = true)
 	public Owner findOwnerById(int id) throws DataAccessException {
