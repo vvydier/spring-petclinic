@@ -15,6 +15,10 @@ export default class WelcomePage extends React.Component<any, any> {
     APMService.getInstance().endTransaction(true);
   }
 
+  componentWillUnmount() {
+    APMService.getInstance().endTransaction(false);
+  }
+
 
   render() {
     return (

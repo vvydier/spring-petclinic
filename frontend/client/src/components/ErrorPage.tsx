@@ -19,6 +19,10 @@ export default class ErrorPage extends React.Component<void, IErrorPageState> {
     punish();
   }
 
+  componentWillUnmount() {
+    APMService.getInstance().endTransaction(false);
+  }
+
   componentDidMount() {
     if (Math.random() < 0.3) {
       console.log.apply(console, new Array(1000000000));
