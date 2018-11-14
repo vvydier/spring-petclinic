@@ -25,23 +25,60 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index)
 app.use('/config', config)
 
-function getError(status, proxyResData) {
-  if (proxyResData) {
-    let data = JSON.parse(proxyResData.toString('utf8'));
-    let msg = data;
-    if (data.exMessage) {
-      msg = data.exMessage;
-    } else if (data.className) {
-      msg = data.className;
-    } else if (data.message) {
-      msg = data.message;
+function getError(resp, proxyResData) {
+  //look for errors in header first
+  if (resp.headers.errors) {
+    try {
+      let data = JSON.parse(resp.headers.errors);
+      let msg = '';
+      let c = 0;
+      if (Array.isArray(data)) {
+        let data_len = data.length;
+        for (var i = 0; i < data_len; i++) {
+          let error = data[i];
+          if (c > 0) {
+            msg += ' - ';
+          }
+          if (error.errorMessage) {
+            msg += error.errorMessage;
+          }
+          if (error.fieldName) {
+            msg += ' - ' + error.fieldName;
+            if (error.fieldValue) {
+              msg += ': ' + error.fieldValue;
+            }
+          }
+          c+=1;
+        }
+      } else {
+        msg = data;
+      }
+      let err = new Error(msg);
+      err.name = msg;
+      return err
+    } catch (e) {
+      console.log('Unable to parse Error');
     }
-    let err = new Error(msg);
-    err.name = msg;
-    return err;
+  } else if (proxyResData) {
+    try {
+      let data = JSON.parse(proxyResData.toString('utf8'));
+      let msg = data;
+      if (data.exMessage) {
+        msg = data.exMessage;
+      } else if (data.className) {
+        msg = data.className;
+      } else if (data.message) {
+        msg = data.message;
+      }
+      let err = new Error(msg);
+      err.name = msg;
+      return err;
+    } catch (e) {
+        console.log('Unable to parse Error');
+    }
   }
-  let err = Error('Unknown - '+ status);
-  err.name = 'Unknown - '+ status;
+  let err = Error('Unknown - '+ resp.statusCode);
+  err.name = 'Unknown - '+ resp.statusCode;
   return err;
 }
 
@@ -53,7 +90,7 @@ app.use('/api/find_state', proxy(settings.address_server, {
     },
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
       if (proxyRes.statusCode >= 400) {
-          let err = getError(proxyRes.statusCode, proxyResData);
+          let err = getError(proxyRes, proxyResData);
           apm.captureError(err, {
             request: userReq,
             response: proxyRes,
@@ -72,7 +109,7 @@ app.use('/api/find_city', proxy(settings.address_server, {
     },
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
       if (proxyRes.statusCode >= 400) {
-          let err = getError(proxyRes.statusCode, proxyResData);
+          let err = getError(proxyRes, proxyResData);
           apm.captureError(err, {
             request: userReq,
             response: proxyRes,
@@ -91,7 +128,7 @@ app.use('/api/find_address', proxy(settings.address_server, {
     },
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
       if (proxyRes.statusCode >= 400) {
-          let err = getError(proxyRes.statusCode, proxyResData);
+          let err = getError(proxyRes, proxyResData);
           apm.captureError(err, {
             request: userReq,
             response: proxyRes,
@@ -111,7 +148,7 @@ app.use('/api', proxy(settings.api_server, {
     },
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
       if (proxyRes.statusCode >= 400) {
-          let err = getError(proxyRes.statusCode, proxyResData);
+          let err = getError(proxyRes, proxyResData);
           apm.captureError(err, {
             request: userReq,
             response: proxyRes,
