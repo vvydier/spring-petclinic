@@ -83,7 +83,7 @@ export class APMService {
       if (APMService.instance.apm.getCurrentTransaction()) {
         APMService.instance.apm.getCurrentTransaction().end();
       }
-      let transaction = APMService.instance.apm.startTransaction(name, 'react');
+      let transaction = APMService.instance.apm.startTransaction(name, 'Events');
       APMService.instance.apm.setTags({'success_load': 'false'});
       console.log(transaction);
       APMService.instance.open = true;
