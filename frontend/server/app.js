@@ -82,6 +82,14 @@ function getError(resp, proxyResData) {
   return err;
 }
 
+function captureErrorBody(proxyResData) {
+  try {
+    return JSON.parse(proxyResData.toString('utf8'))
+  } catch (e) {
+    return {}
+  }
+}
+
 app.use('/api/find_state', proxy(settings.address_server, {
     preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
@@ -94,7 +102,7 @@ app.use('/api/find_state', proxy(settings.address_server, {
           apm.captureError(err, {
             request: userReq,
             response: proxyRes,
-            custom: JSON.parse(proxyResData.toString('utf8'))
+            custom: captureErrorBody(proxyResData)
           });
       }
       return proxyResData
@@ -113,7 +121,7 @@ app.use('/api/find_city', proxy(settings.address_server, {
           apm.captureError(err, {
             request: userReq,
             response: proxyRes,
-            custom: JSON.parse(proxyResData.toString('utf8'))
+            custom: captureErrorBody(proxyResData)
           });
       }
       return proxyResData
@@ -132,7 +140,7 @@ app.use('/api/find_address', proxy(settings.address_server, {
           apm.captureError(err, {
             request: userReq,
             response: proxyRes,
-            custom: JSON.parse(proxyResData.toString('utf8'))
+            custom: captureErrorBody(proxyResData)
           });
       }
       return proxyResData
@@ -152,7 +160,7 @@ app.use('/api', proxy(settings.api_server, {
           apm.captureError(err, {
             request: userReq,
             response: proxyRes,
-            custom: JSON.parse(proxyResData.toString('utf8'))
+            custom: captureErrorBody(proxyResData)
           });
       }
       return proxyResData
