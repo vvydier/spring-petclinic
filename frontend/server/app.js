@@ -82,6 +82,17 @@ function getError(resp, proxyResData) {
   return err;
 }
 
+
+function getUserDetails(req) {
+  headers = {}
+  for (var header in req.headers) {
+    headers[header.toLowerCase()] = req.headers[header];
+  }
+  let username = headers['x-forwarded-user'] ? headers['x-forwarded-user'] : 'N/A';
+  let email = headers['x-forwarded-email'] ? headers['x-forwarded-email'] : 'N/A';
+  return [ username, email ]
+}
+
 function captureErrorBody(proxyResData) {
   try {
     return JSON.parse(proxyResData.toString('utf8'))
@@ -94,6 +105,11 @@ app.use('/api/find_state', proxy(settings.address_server, {
     preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
       apm.setTransactionName('/api/find_state')
+      let user = getUserDetails(req);
+      apm.setUserContext({
+        'username': user[0],
+        'email': user[1]
+      });
       return '/api/find_state'
     },
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
@@ -113,6 +129,11 @@ app.use('/api/find_city', proxy(settings.address_server, {
     preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
       apm.setTransactionName('/api/find_city')
+      let user = getUserDetails(req);
+      apm.setUserContext({
+        'username': user[0],
+        'email': user[1]
+      });
       return '/api/find_city'
     },
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
@@ -132,6 +153,11 @@ app.use('/api/find_address', proxy(settings.address_server, {
     preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
       apm.setTransactionName('/api/find_address')
+      let user = getUserDetails(req);
+      apm.setUserContext({
+        'username': user[0],
+        'email': user[1]
+      });
       return '/api/find_address'
     },
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
@@ -152,6 +178,11 @@ app.use('/api', proxy(settings.api_server, {
     preserveHostHdr: true,
     proxyReqPathResolver: function (req) {
       apm.setTransactionName('/api/'+req.url.split('/').filter(c => c != '').slice(0,1)[0])
+      let user = getUserDetails(req);
+      apm.setUserContext({
+        'username': user[0],
+        'email': user[1]
+      });
       return settings.api_prefix+req.url
     },
     userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
@@ -197,7 +228,6 @@ app.use(function(err, req, res, next) {
           error: err
       });
   }
-
 });
 
 module.exports = app;
