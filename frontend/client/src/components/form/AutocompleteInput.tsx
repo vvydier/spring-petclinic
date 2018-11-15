@@ -16,6 +16,7 @@ interface IAutocompleteProps {
   value: string;
   onFetch: IInputFetchHandler;
   onChange: IInputValueHandler;
+  disabled: boolean;
 };
 
 interface IAutocompleteState {
@@ -72,7 +73,7 @@ export default class AutocompleteInput extends React.Component<IAutocompleteProp
     return (
         <div className={cssGroup}>
           <label className='col-sm-2 control-label'>{this.props.label}</label>
-          <div className='col-sm-10'>
+          <div className={this.props.disabled ? 'disable-form-control col-sm-10' : 'col-sm-10' }>
             <Autosuggest
                 className='form-control'
                 suggestions={suggestions}

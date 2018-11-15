@@ -7,7 +7,6 @@ import SelectInput from '../form/SelectInput';
 import AutocompleteInput from '../form/AutocompleteInput';
 import { APMService, punish } from '../../main';
 import { Digits, NotEmpty } from '../form/Constraints';
-
 import { IInputChangeHandler, IFieldError, IError, IOwner, IRouterContext, ISelectOption } from '../../types/index';
 
 interface IOwnerEditorProps {
@@ -20,12 +19,14 @@ interface IOwnerEditorState {
   states?: ISelectOption[];
   cities?: ISelectOption[];
   addresses?: ISelectOption[];
+  loading?: boolean;
 };
 
 export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwnerEditorState> {
 
   context: IRouterContext;
   initial_render: boolean;
+  last_used_zip: string;
 
   static contextTypes = {
     router: React.PropTypes.object.isRequired
@@ -36,6 +37,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     APMService.getInstance().startTransaction('OwnerEditor');
     punish();
     this.initial_render = true;
+    this.last_used_zip = null;
     this.onInputChange = this.onInputChange.bind(this);
     this.onZipChange = this.onZipChange.bind(this);
     this.address_service_fetch = this.address_service_fetch.bind(this);
@@ -100,10 +102,9 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   onSubmit(event) {
     const { owner } = this.state;
     const url = owner.isNew ? 'api/owners' : 'api/owners/' + owner.id;
-    this.setState({ error: {'fieldErrors': {}} });
+    this.setState({ error: {'fieldErrors': {}}, loading: true });
     APMService.getInstance().startTransaction( owner.isNew ? 'CreateOwner' : 'UpdateOwner');
     event.preventDefault();
-
     xhr_submitForm(owner.isNew ? 'POST' : 'PUT', url, owner, (status, response) => {
       if (status === 204 || status === 201) {
         APMService.getInstance().endTransaction(true);
@@ -117,7 +118,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
             map[error.fieldName] = { 'field': error.fieldName, 'message': error.errorMessage };
             return map;
         }, {});
-        this.setState({ error: {'fieldErrors': fieldErrors} });
+        this.setState({ error: {'fieldErrors': fieldErrors}, loading: false });
       }
     });
   }
@@ -173,7 +174,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
 
   onZipChange(name: string, value: string) {
     const { owner } = this.state;
-    if (value.trim() !== '' && owner.zipCode !== value) {
+    if (value.trim() !== '' && this.last_used_zip !== value) {
       APMService.getInstance().startTransaction('OwnerEditor:ZipChange');
       const requestUrl = url('api/find_state');
       this.xhr_address_service_fetch(requestUrl, { zip_code: value }, (data) => {
@@ -182,6 +183,7 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
           const modifiedOwner = Object.assign({}, owner, { [name]: value, ['state']: '', ['city']: '' });
           states.unshift({'value': '', 'name': ''});
           APMService.getInstance().endTransaction(true);
+          this.last_used_zip = value;
           this.setState({
             owner: modifiedOwner,
             states: states,
@@ -253,27 +255,28 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
   }
 
   render() {
-    const { owner, error, states, cities, addresses } = this.state;
+    const { owner, error, states, cities, addresses, loading } = this.state;
     return (
-      <span id='owner_editor'>
-        <h2>{owner.isNew ? 'Add Owner' : 'Update Owner'}</h2>
-        <form className='form-horizontal' method='POST' action={url(owner.isNew ? 'api/owners' : 'api/owners/' + owner.id)}>
-          <div className='form-group has-feedback'>
-            <Input object={owner} error={error} constraint={NotEmpty} label='First Name' name='firstName' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={NotEmpty} label='Last Name' name='lastName' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={NotEmpty} label='Zip Code' name='zipCode' onBlur={this.onZipChange} />
-            <SelectInput object={owner} size={1} label='State' name='state' options={states} onChange={this.onStateChange} disabled={states.length === 1} />
-            <SelectInput object={owner} error={error} size={1} label='City' name='city' options={cities} onChange={this.onCityChange} disabled={cities.length === 1}/>
-            <AutocompleteInput value={owner.address} label='Address' name='address' onFetch={this.onAddressFetch} onChange={this.onAddressChange} />
-            <Input object={owner} error={error} constraint={Digits(10)} label='Telephone' name='telephone' onChange={this.onInputChange} />
-          </div>
-          <div className='form-group'>
-            <div className='col-sm-offset-2 col-sm-10'>
-              <button className='btn btn-default' type='submit' onClick={this.onSubmit}>{owner.isNew ? 'Add Owner' : 'Update Owner'}</button>
+        <span id='owner_editor'>
+          <div className='loader' style={ !loading ? { 'display': 'none' } : {} }></div>
+          <h2>{owner.isNew ? 'Add Owner' : 'Update Owner'}</h2>
+          <form className='form-horizontal' method='POST' action={url(owner.isNew ? 'api/owners' : 'api/owners/' + owner.id)}>
+            <div className='form-group has-feedback'>
+              <Input object={owner} error={error} constraint={NotEmpty} label='First Name' name='firstName' onChange={this.onInputChange} disabled={loading} />
+              <Input object={owner} error={error} constraint={NotEmpty} label='Last Name' name='lastName' onChange={this.onInputChange} disabled={loading} />
+              <Input object={owner} error={error} constraint={NotEmpty} label='Zip Code' name='zipCode' onChange={this.onInputChange} onBlur={this.onZipChange} disabled={loading} />
+              <SelectInput object={owner} error={error} size={1} label='State' name='state' options={states} onChange={this.onStateChange} disabled={loading || states.length === 1} />
+              <SelectInput object={owner} error={error} size={1} label='City' name='city' options={cities} onChange={this.onCityChange} disabled={loading || cities.length === 1}/>
+              <AutocompleteInput value={owner.address} label='Address' name='address' onFetch={this.onAddressFetch} onChange={this.onAddressChange} disabled={loading} />
+              <Input object={owner} error={error} constraint={Digits(10)} label='Telephone' name='telephone' onChange={this.onInputChange} disabled={loading} />
             </div>
-          </div>
-        </form>
-      </span>
+            <div className='form-group'>
+              <div className='col-sm-offset-2 col-sm-10'>
+                <button className='btn btn-default' type='submit' onClick={this.onSubmit}>{owner.isNew ? 'Add Owner' : 'Update Owner'}</button>
+              </div>
+            </div>
+          </form>
+        </span>
     );
   }
 }

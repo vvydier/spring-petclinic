@@ -10,7 +10,7 @@ const NoConstraint: IConstraint = {
 };
 
 
-export default ({object, error, name, constraint = NoConstraint, label, onChange, onBlur }: { object: any, error: IError, name: string, constraint?: IConstraint, label: string, onChange?: IInputChangeHandler, onBlur?: IInputBlurHandler }) => {
+export default ({object, error, name, constraint = NoConstraint, label, disabled, onChange, onBlur }: { object: any, error: IError, name: string, constraint?: IConstraint, label: string, disabled?: boolean, onChange?: IInputChangeHandler, onBlur?: IInputBlurHandler }) => {
 
   const handleOnChange = event => {
     if (onChange) {
@@ -42,7 +42,7 @@ export default ({object, error, name, constraint = NoConstraint, label, onChange
     <div className={cssGroup}>
       <label className='col-sm-2 control-label'>{label}</label>
       <div className='col-sm-10'>
-        <input type='text' name={name} className='form-control' defaultValue={value} onChange={handleOnChange} onBlur={handleOnBlur} />
+        <input type='text' name={name} className='form-control' defaultValue={value} onChange={handleOnChange} onBlur={handleOnBlur} disabled={ disabled }/>
          <FieldFeedbackPanel valid={valid} fieldError={fieldError} />
       </div>
     </div>
