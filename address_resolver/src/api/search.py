@@ -12,6 +12,10 @@ def check_parameters(req, params):
             missing.append("%s is required" % param)
     return missing
 
+@bp.route('/', methods=['GET'])
+def root():
+    return jsonify({"success": True, "message": "Service Available"}), 200
+
 @bp.route('/find_state', methods=['POST'])
 def find_state():
     if request.method == 'POST':
