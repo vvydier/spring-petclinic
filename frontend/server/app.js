@@ -23,6 +23,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index)
+app.use('/healthcheck', index)
 app.use('/config', config)
 
 function getError(resp, proxyResData) {
