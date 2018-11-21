@@ -5,6 +5,7 @@ class Config(object):
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL','localhost:9200')
     ELASTICSEARCH_USER = os.getenv('ELASTICSEARCH_USER','elastic')
     ELASTICSEARCH_PASSWORD = os.getenv('ELASTICSEARCH_PASSWORD', 'changeme')
+    ELASTICSEARCH_VALIDATE_CERTS = os.getenv('ELASTICSEARCH_VALIDATE_CERTS', 'true')
     ADDRESSES_PER_PAGE=int(os.getenv('ADDRESSES_PER_PAGE','25'))
     ADDRESS_INDEX = os.getenv('ADDRESS_INDEX','address')
     ELASTIC_APM = {
