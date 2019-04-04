@@ -14,12 +14,12 @@ class StateSearch():
 
     def query(self):
         query = json.loads(self.query_renderer.render(self))
-        results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc', body=query)
+        results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='_doc', body=query)
         states = [result["key"] for result in results["aggregations"]["state"]["buckets"]]
         states = list(set(state.lower() for state in states))
         if len(states) == 0:
             query = json.loads(self.query_renderer.render_path('all_states.mustache'))
-            results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc',
+            results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='_doc',
                                                        body=query)
             states = [result["key"] for result in results["aggregations"]["state"]["buckets"]]
             states = list(set(state.lower() for state in states))
@@ -43,11 +43,11 @@ class CitySearch():
 
     def query(self):
         query = json.loads(self.query_renderer.render(self))
-        results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc', body=query)
+        results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='_doc', body=query)
         cities = [result["key"] for result in results["aggregations"]["city"]["buckets"]]
         if len(cities) == 0:
             query = json.loads(self.query_renderer.render_path('cities_for_state.mustache',self))
-            results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc',
+            results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='_doc',
                                                        body=query)
             cities = [result["key"] for result in results["aggregations"]["city"]["buckets"]]
         return {
@@ -77,7 +77,7 @@ class AddressSearch():
 
     def query(self):
         query = json.loads(self.query_renderer.render(self))
-        results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='doc', body=query)
+        results = current_app.elasticsearch.search(index=current_app.config['ADDRESS_INDEX'], doc_type='_doc', body=query)
         addresses = [result["_source"]["address"] for result in results["hits"]["hits"]]
         return {
             "addresses": list(set(address.lower() for address in addresses))[:10]
