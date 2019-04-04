@@ -18,7 +18,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.6",
-    "elastic-apm-js-base": "2.0.0",
+    "elastic-apm-js-base": "3.0.0",
     "moment": "^2.22.2",
     "react": "^15.5.8",
     "react-autosuggest": "^9.4.2",
