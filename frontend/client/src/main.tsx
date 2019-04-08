@@ -84,7 +84,7 @@ export class APMService {
         APMService.instance.apm.getCurrentTransaction().end();
       }
       let transaction = APMService.instance.apm.startTransaction(name, 'Events');
-      APMService.instance.apm.setTags({'success_load': 'false'});
+      APMService.instance.apm.addTags({'success_load': 'false'});
       console.log(transaction);
       APMService.instance.open = true;
     }
@@ -93,7 +93,7 @@ export class APMService {
   endTransaction(completed) {
     if (APMService.instance.open) {
       APMService.instance.open = false;
-      APMService.instance.apm.setTags({'success_load': completed.toString()});
+      APMService.instance.apm.addTags({'success_load': completed.toString()});
       console.log('Closing transaction');
       let transaction = APMService.instance.apm.getCurrentTransaction();
       transaction.end();
