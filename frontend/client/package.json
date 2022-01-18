@@ -20,10 +20,10 @@
     "classnames": "^2.2.6",
     "elastic-apm-js-base": "3.0.0",
     "moment": "^2.22.2",
-    "react": "^15.5.8",
+    "react": "^16.5.0",
     "react-autosuggest": "^9.4.2",
     "react-datepicker": "^0.29.0",
-    "react-dom": "^15.5.8",
+    "react-dom": "^16.5.0",
     "react-router": "^2.7.0",
     "redbox-react": "^1.2.3",
     "whatwg-fetch": "^1.0.0"
