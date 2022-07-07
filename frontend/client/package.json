@@ -19,7 +19,7 @@
     "@elastic/apm-rum": "^5.1.1",
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.6",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "react": "^15.5.8",
     "react-autosuggest": "^9.4.2",
     "react-datepicker": "^0.29.0",
