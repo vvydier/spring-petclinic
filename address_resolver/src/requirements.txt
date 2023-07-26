@@ -1,5 +1,5 @@
 blinker==1.4
-certifi==2018.10.15
+certifi==2023.7.22
 Click==7.0
 elastic-apm==4.2.2
 elasticsearch==6.3.1
